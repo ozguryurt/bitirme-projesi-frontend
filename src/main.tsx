@@ -7,6 +7,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import Questions from './pages/Questions';
+import Question from './pages/Question';
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -14,6 +15,7 @@ createRoot(document.getElementById('root')!).render(
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/questions" element={<Questions />} />
+        <Route path="/question/:questionId" element={<Question />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
