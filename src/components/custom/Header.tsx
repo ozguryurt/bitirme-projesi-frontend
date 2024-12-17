@@ -35,7 +35,8 @@ import {
     NavigationMenuLink,
     NavigationMenuList,
 } from "@/components/ui/navigation-menu"
-import { Link } from "react-router"
+import { Link, NavLink } from "react-router"
+import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 
 const Header = () => {
     return (
@@ -44,15 +45,13 @@ const Header = () => {
                 <NavigationMenuList className="w-full flex justify-between items-center px-24 py-5 shadow gap-5">
                     <div className="flex justify-start items-center gap-5">
                         <NavigationMenuItem>
-                            <Link to="/" className="font-medium">
-                                <NavigationMenuLink>
-                                    Ana sayfa
-                                </NavigationMenuLink>
-                            </Link>
+                            <NavigationMenuLink href="/">
+                                Ana sayfa
+                            </NavigationMenuLink>
                         </NavigationMenuItem>
                         <NavigationMenuItem>
                             <Link to="/questions" className="font-medium">
-                                <NavigationMenuLink>
+                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                     Sorular
                                 </NavigationMenuLink>
                             </Link>
@@ -61,14 +60,14 @@ const Header = () => {
                     <div className="flex justify-end items-center gap-5">
                         <NavigationMenuItem>
                             <Link to="/register" className="font-medium">
-                                <NavigationMenuLink>
+                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                     Kayıt ol
                                 </NavigationMenuLink>
                             </Link>
                         </NavigationMenuItem>
                         <NavigationMenuItem>
                             <Link to="/login" className="font-medium">
-                                <NavigationMenuLink>
+                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                     Giriş yap
                                 </NavigationMenuLink>
                             </Link>

@@ -3,6 +3,7 @@ import { ReactNode } from "react"
 
 type ModalType = {
     showModal: (title: string, description: string, body: ReactNode) => void
+    closeModal: () => void
 }
 
 const useModal = (): ModalType => {
@@ -15,7 +16,14 @@ const useModal = (): ModalType => {
         setModalBody(body)
     }
 
-    return { showModal }
+    const closeModal = () => {
+        setStatus(false)
+        setModalTitle("")
+        setModalDescription("")
+        setModalBody(<></>)
+    }
+
+    return { showModal, closeModal }
 }
 
 export default useModal
