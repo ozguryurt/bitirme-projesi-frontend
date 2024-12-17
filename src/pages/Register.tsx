@@ -34,7 +34,7 @@ const Register = () => {
 
     return (
         <>
-            <div className="min-h-screen flex flex-col justify-center items-center gap-3">
+            <div className="min-h-screen flex flex-col justify-center items-center gap-3 px-5 lg:px-24 py-5">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-9/12">
                         <FormField

@@ -33,7 +33,7 @@ const Question = () => {
 
     return (
         <>
-            <div className="w-full flex flex-col gap-3 px-24 py-10">
+            <div className="w-full flex flex-col gap-3 px-5 lg:px-24 py-5">
                 <p className="w-full font-extrabold text-3xl">
                     Lorem ipsum dolor sit amet. ({questionId})
                 </p>

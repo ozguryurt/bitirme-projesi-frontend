@@ -34,8 +34,8 @@ const Questions = () => {
 
     return (
         <>
-            <div className="grid grid-cols-2 px-24 py-10 gap-5">
-                <div className="flex col-span-2 justify-end items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 px-5 lg:px-24 py-5 gap-5">
+                <div className="flex col-span-1 lg:col-span-2 justify-end items-center">
                     <Button asChild>
                         <Link to={`/new-question`}><FaPlus /> Yeni soru</Link>
                     </Button>

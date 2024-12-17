@@ -18,7 +18,7 @@ const NewQuestion = () => {
 
     return (
         <>
-            <div className="w-full flex flex-col gap-3 px-24 py-10">
+            <div className="w-full flex flex-col gap-3 px-5 lg:px-24 py-5">
                 <p className="font-bold text-start text-2xl">Yeni soru oluştur</p>
                 <MarkdownEditor />
                 <MultiSelect

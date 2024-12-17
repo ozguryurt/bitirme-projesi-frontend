@@ -35,42 +35,44 @@ import {
     NavigationMenuLink,
     NavigationMenuList,
 } from "@/components/ui/navigation-menu"
-import { Link, NavLink } from "react-router"
+import { Link } from "react-router"
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 
 const Header = () => {
     return (
         <>
             <NavigationMenu>
-                <NavigationMenuList className="w-full flex justify-between items-center px-24 py-5 shadow gap-5">
+                <NavigationMenuList className="w-full flex-wrap lg:flex justify-between items-center px-24 py-5 shadow gap-5">
                     <div className="flex justify-start items-center gap-5">
                         <NavigationMenuItem>
-                            <NavigationMenuLink href="/">
-                                Ana sayfa
+                            <NavigationMenuLink asChild>
+                                <Link to="/" className={navigationMenuTriggerStyle()}>
+                                    Ana sayfa
+                                </Link>
                             </NavigationMenuLink>
                         </NavigationMenuItem>
                         <NavigationMenuItem>
-                            <Link to="/questions" className="font-medium">
-                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                            <NavigationMenuLink asChild>
+                                <Link to="/questions" className={navigationMenuTriggerStyle()}>
                                     Sorular
-                                </NavigationMenuLink>
-                            </Link>
+                                </Link>
+                            </NavigationMenuLink>
                         </NavigationMenuItem>
                     </div>
                     <div className="flex justify-end items-center gap-5">
                         <NavigationMenuItem>
-                            <Link to="/register" className="font-medium">
-                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                            <NavigationMenuLink asChild>
+                                <Link to="/register" className={navigationMenuTriggerStyle()}>
                                     Kayıt ol
-                                </NavigationMenuLink>
-                            </Link>
+                                </Link>
+                            </NavigationMenuLink>
                         </NavigationMenuItem>
                         <NavigationMenuItem>
-                            <Link to="/login" className="font-medium">
-                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                            <NavigationMenuLink asChild>
+                                <Link to="/login" className={navigationMenuTriggerStyle()}>
                                     Giriş yap
-                                </NavigationMenuLink>
-                            </Link>
+                                </Link>
+                            </NavigationMenuLink>
                         </NavigationMenuItem>
                         <NavigationMenuItem>
                             <DropdownMenu>
