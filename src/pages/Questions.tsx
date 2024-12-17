@@ -1,4 +1,7 @@
 import QuestionCard from "@/components/custom/QuestionCard"
+import { Button } from "@/components/ui/button"
+import { FaPlus } from "react-icons/fa"
+import { Link } from "react-router"
 
 const Questions = () => {
 
@@ -32,6 +35,11 @@ const Questions = () => {
     return (
         <>
             <div className="grid grid-cols-2 px-24 py-10 gap-5">
+                <div className="flex col-span-2 justify-end items-center">
+                    <Button asChild>
+                        <Link to={`/new-question`}><FaPlus /> Yeni soru</Link>
+                    </Button>
+                </div>
                 {
                     questions.map((question, index) => {
                         return (
