@@ -8,6 +8,7 @@ import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import Questions from './pages/Questions';
 import Question from './pages/Question';
+import NewQuestion from './pages/NewQuestion';
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -15,6 +16,7 @@ createRoot(document.getElementById('root')!).render(
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/questions" element={<Questions />} />
+        <Route path="/new-question" element={<NewQuestion />} />
         <Route path="/question/:questionId" element={<Question />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
