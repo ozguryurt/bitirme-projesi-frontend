@@ -98,7 +98,7 @@ const Register = () => {
                                 <Link to="/tos" className="text-blue-500">Kullanıcı Sözleşmesi</Link>'ni kabul ediyorum.
                             </label>
                         </div>
-                        <Button type="submit" className="font-medium text-base text-white dark:text-zinc-800">Kaydol</Button>
+                        <Button type="submit" className="font-medium text-base text-white dark:text-zinc-800">Kayıt ol</Button>
                     </form>
                 </Form>
                 <p className="font-medium text-sm text-zinc-800 dark:text-white">Bir hesabın var mı? <Link to="/login" className="text-blue-500">Buraya</Link> tıklayarak giriş yap!</p>

@@ -1,6 +1,6 @@
 import { Link } from "react-router"
 import Divider from "./Divider"
-import { FaArrowDown, FaArrowUp } from "react-icons/fa"
+import { ChevronsDown, ChevronsUp } from "lucide-react"
 
 const ReplyCard = () => {
     return (
@@ -23,11 +23,11 @@ const ReplyCard = () => {
                 <Divider />
                 <div className="w-full flex justify-start items-center gap-3">
                     <div className="flex justify-center items-center gap-1 cursor-pointer">
-                        <FaArrowUp />
+                        <ChevronsUp className="text-green-500"/>
                         <span className="text-xs font-medium">7</span>
                     </div>
                     <div className="flex justify-center items-center gap-1 cursor-pointer">
-                        <FaArrowDown />
+                        <ChevronsDown className="text-red-500" />
                         <span className="text-xs font-medium">4</span>
                     </div>
                 </div>

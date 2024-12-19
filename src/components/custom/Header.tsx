@@ -1,4 +1,5 @@
 import {
+    CircleHelp,
     Cloud,
     CreditCard,
     Github,
@@ -6,6 +7,7 @@ import {
     LifeBuoy,
     LogOut,
     Mail,
+    Megaphone,
     MessageSquare,
     Plus,
     PlusCircle,
@@ -23,7 +25,6 @@ import {
     DropdownMenuLabel,
     DropdownMenuPortal,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
     DropdownMenuSub,
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
@@ -77,7 +78,7 @@ const Header = () => {
                         <NavigationMenuItem>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="outline">Profil</Button>
+                                    <img src="https://www.gravatar.com/avatar/0dde57a178da66520b18e3a737b6d6ed?s=80&d=mp&r=g" alt="User profile picture" className="w-12 h-12 rounded-full cursor-pointer" />
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56">
                                     <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
@@ -85,78 +86,28 @@ const Header = () => {
                                     <DropdownMenuGroup>
                                         <DropdownMenuItem>
                                             <User />
-                                            <span>Profile</span>
-                                            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            <CreditCard />
-                                            <span>Faturalandırma</span>
-                                            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                                            <span>Profil</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem>
                                             <Settings />
                                             <span>Ayarlar</span>
-                                            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            <Keyboard />
-                                            <span>Kısayol tuşları</span>
-                                            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
                                         </DropdownMenuItem>
                                     </DropdownMenuGroup>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
                                         <DropdownMenuItem>
-                                            <Users />
-                                            <span>Takım</span>
+                                            <CircleHelp />
+                                            <span>Sorularım</span>
                                         </DropdownMenuItem>
-                                        <DropdownMenuSub>
-                                            <DropdownMenuSubTrigger>
-                                                <UserPlus />
-                                                <span>Kullanıcı davet et</span>
-                                            </DropdownMenuSubTrigger>
-                                            <DropdownMenuPortal>
-                                                <DropdownMenuSubContent>
-                                                    <DropdownMenuItem>
-                                                        <Mail />
-                                                        <span>E-posta</span>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem>
-                                                        <MessageSquare />
-                                                        <span>Mesaj</span>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem>
-                                                        <PlusCircle />
-                                                        <span>Diğer...</span>
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuSubContent>
-                                            </DropdownMenuPortal>
-                                        </DropdownMenuSub>
                                         <DropdownMenuItem>
-                                            <Plus />
-                                            <span>Yeni takım</span>
-                                            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+                                            <Megaphone />
+                                            <span>Bildirimler</span>
                                         </DropdownMenuItem>
                                     </DropdownMenuGroup>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem>
-                                        <Github />
-                                        <span>GitHub</span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <LifeBuoy />
-                                        <span>Destek</span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem disabled>
-                                        <Cloud />
-                                        <span>API</span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem>
                                         <LogOut />
                                         <span>Çıkış yap</span>
-                                        <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
