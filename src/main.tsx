@@ -10,6 +10,13 @@ import Questions from './pages/Questions';
 import Question from './pages/Question';
 import NewQuestion from './pages/NewQuestion';
 
+import AdminLogin from './pages/admin/AdminLogin'
+import AdminLayout from './layouts/AdminLayout';
+import AdminHome from './pages/admin/AdminHome';
+import DashboardLayout from './layouts/DashboardLayout';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminQuestions from './pages/admin/AdminQuestions';
+
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <Routes>
@@ -21,6 +28,14 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+      </Route>
+      <Route path="admin" element={<AdminLayout />}>
+        <Route element={<DashboardLayout />}>
+          <Route path="dashboard" element={<AdminHome />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="questions" element={<AdminQuestions />} />
+        </Route>
+        <Route path="login" element={<AdminLogin />} />
       </Route>
     </Routes>
   </BrowserRouter>,
