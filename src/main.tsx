@@ -16,6 +16,7 @@ import AdminHome from './pages/admin/AdminHome';
 import DashboardLayout from './layouts/DashboardLayout';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminQuestions from './pages/admin/AdminQuestions';
+import EditQuestion from './pages/EditQuestion';
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -24,6 +25,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/" element={<Home />} />
         <Route path="/questions" element={<Questions />} />
         <Route path="/new-question" element={<NewQuestion />} />
+        <Route path="/edit-question" element={<EditQuestion />} />
         <Route path="/question/:questionId" element={<Question />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

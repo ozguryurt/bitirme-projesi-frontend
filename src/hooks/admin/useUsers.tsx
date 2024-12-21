@@ -12,10 +12,10 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 export const useUsers = () => {
     const { data, error } = useSWR('https://dummyjson.com/users', fetcher);
 
-    const users = data
+    const users: User[] = data
         ? data.users.map((user: User) => ({
             id: user.id,
-            username: `${user.username}`,
+            username: user.username,
             email: user.email,
             age: user.age,
         }))

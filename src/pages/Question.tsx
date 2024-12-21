@@ -15,6 +15,7 @@ import { z } from "zod"
 import questionReplySendSchema from "@/schemas/questionReplySendSchema"
 import { Button } from "@/components/ui/button"
 import ReplyCard from "@/components/custom/ReplyCard"
+import { SquarePen } from "lucide-react"
 
 const Question = () => {
 
@@ -34,9 +35,14 @@ const Question = () => {
     return (
         <>
             <div className="w-full flex flex-col gap-3 px-5 lg:px-24 py-5">
-                <p className="w-full font-extrabold text-3xl">
-                    Lorem ipsum dolor sit amet. ({questionId})
-                </p>
+                <div className="w-full flex justify-start items-center gap-3">
+                    <p className="w-full font-extrabold text-3xl">
+                        Lorem ipsum dolor sit amet. ({questionId})
+                    </p>
+                    <Link to={`/edit-question`}>
+                        <SquarePen />
+                    </Link>
+                </div>
                 <Link to={`/profil/10`} className="flex justify-start items-center gap-2">
                     <img src="https://www.gravatar.com/avatar/0dde57a178da66520b18e3a737b6d6ed?s=80&d=mp&r=g" alt="User profile picture" className="w-14 h-14 rounded-full" />
                     <div className="w-full flex flex-col justify-center items-start">
