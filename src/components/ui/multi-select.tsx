@@ -153,6 +153,7 @@ export const MultiSelect = React.forwardRef<
         };
 
         const toggleOption = (option: string) => {
+            setIsAnimating(isAnimating) // sonradan eklendi
             const newSelectedValues = selectedValues.includes(option)
                 ? selectedValues.filter((value) => value !== option)
                 : [...selectedValues, option];

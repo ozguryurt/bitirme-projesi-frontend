@@ -29,7 +29,7 @@ const Question = () => {
     })
 
     function onSubmit(data: z.infer<typeof questionReplySendSchema>) {
-        console.log("success")
+        console.log(data)
     }
 
     return (
