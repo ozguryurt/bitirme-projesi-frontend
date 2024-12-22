@@ -28,7 +28,7 @@ const QuestionCard = ({ id, title, tags }: QuestionCardProps) => {
                 <Divider />
                 <div className="w-full flex flex-wrap gap-3">
                     {
-                        tags.map((tag, index) => <Link to={`/questions/tag/${tag}`} key={index} className="font-medium text-blue-500 text-xs">#{tag}</Link>)
+                        tags.map((tag, index) => <Link to={`/questions?tags=${tag}`} key={index} className="font-medium text-blue-500 text-xs">#{tag}</Link>)
                     }
                 </div>
             </div>
