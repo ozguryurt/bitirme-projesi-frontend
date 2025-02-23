@@ -15,18 +15,24 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 import loginSchema from '@/schemas/loginSchema'
+import { useAuth } from "@/providers/AuthProvider"
 
 const Login = () => {
+
+    const { loginWithEmail } = useAuth()
+
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            username: "",
+            email: "",
             password: ""
         },
     })
-    function onSubmit(values: z.infer<typeof loginSchema>) {
-        console.log(values)
+
+    async function onSubmit(values: z.infer<typeof loginSchema>) {
+        const response = await loginWithEmail(values.email, values.password)
     }
+
     return (
         <>
             <div className="min-h-screen flex flex-col justify-center items-center gap-3 px-5 lg:px-24 py-5">
@@ -34,12 +40,12 @@ const Login = () => {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-9/12">
                         <FormField
                             control={form.control}
-                            name="username"
+                            name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Kullanıcı adı</FormLabel>
+                                    <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">E-posta</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Kullanıcı adı" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
+                                        <Input placeholder="example@mail.com" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
                                     </FormControl>
                                     <FormMessage className="font-medium text-xs" />
                                 </FormItem>
@@ -52,7 +58,7 @@ const Login = () => {
                                 <FormItem>
                                     <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Şifre</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Şifre" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
+                                        <Input placeholder="•••••" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
                                     </FormControl>
                                     <FormDescription>
                                         <Link to="/forgot-password" className="font-medium text-xs text-blue-500">Şifremi unuttum</Link>

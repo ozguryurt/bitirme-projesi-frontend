@@ -17,24 +17,29 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import Divider from "@/components/custom/Divider"
 import { SquarePen, X } from "lucide-react"
-import { useState } from "react"
+import React, { useState } from "react"
+import { useParams } from "react-router"
+import { useAuth } from "@/providers/AuthProvider"
 
-const Profile = () => {
+const Profile: React.FC = () => {
+
+  const { userData } = useAuth()
 
   const [changePicture, setChangePicture] = useState<boolean>(false)
+  const { userId } = useParams()
 
   const settingForm = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      username: "admin",
-      firstName: "",
-      lastName: "",
-      email: "",
-      website: "",
-      about: "",
+      username: userData!.nickname,
+      firstName: userData!.name,
+      lastName: userData!.lastname,
+      email: userData!.email,
+      website: userData!.lastname,
+      about: userData!.lastname,
       password: "",
       passwordAgain: "",
-      picture: undefined, // Default value for picture
+      picture: undefined,
     },
   })
 
@@ -54,9 +59,10 @@ const Profile = () => {
     <div className="flex justify-center items-center px-5 lg:px-24 py-5 gap-5">
       <Form {...settingForm}>
         <form onSubmit={settingForm.handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full lg:w-6/12">
+          <p>User ID: {userId}</p>
           <div className="flex justify-center items-center col-span-1 lg:col-span-2">
             {
-              changePicture ? 
+              changePicture ?
                 <FormField
                   control={settingForm.control}
                   name="picture"

@@ -6,7 +6,7 @@ const ReplyCard = () => {
     return (
         <>
             <div className="w-full flex flex-col gap-3 rounded-md border p-5">
-                <Link to={`/profil/10`} className="flex justify-start items-center gap-2">
+                <Link to={`/profile/10`} className="flex justify-start items-center gap-2">
                     <img src="https://www.gravatar.com/avatar/0dde57a178da66520b18e3a737b6d6ed?s=80&d=mp&r=g" alt="User profile picture" className="w-14 h-14 rounded-full" />
                     <div className="w-full flex flex-col justify-center items-start">
                         <p className="w-full truncate font-medium">

@@ -4,12 +4,12 @@ const HomeInfoCard = ({ title, icon: Icon, count, subtitle }: { title: string, i
     return (
         <div className="rounded-md p-3 border">
             <div className="flex justify-between items-center pb-2">
-                <div className="tracking-tight text-sm font-medium">
+                <div className="tracking-tight text-xl font-medium">
                     {title}
                 </div>
-                <Icon size={17} /> {/* Icon bileşenini burada render ediyoruz */}
+                <Icon size={30} />
             </div>
-            <div className="text-2xl font-bold">
+            <div className="text-3xl font-bold">
                 {count}
             </div>
             <div className="text-xs text-muted-foreground">

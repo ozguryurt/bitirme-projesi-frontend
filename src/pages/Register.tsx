@@ -14,9 +14,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import registerSchema from '@/schemas/registerSchema'
+import { useAuth } from "@/providers/AuthProvider"
 
 
 const Register = () => {
+
+    const { register } = useAuth()
+
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
@@ -27,9 +31,10 @@ const Register = () => {
         },
     })
 
-    function onSubmit(values: z.infer<typeof registerSchema>) {
+    async function onSubmit(values: z.infer<typeof registerSchema>) {
         console.log(values)  // Burada form verilerini işleyebilirsiniz
-        // Form verilerini backend'e gönderme işlemi burada yapılabilir.
+        const response = await register(values.username, values.password, values.passwordAgain, values.email, values.phone)
+        console.log(response)
     }
 
     return (
@@ -44,7 +49,7 @@ const Register = () => {
                                 <FormItem>
                                     <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Kullanıcı adı</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Kullanıcı adı" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
+                                        <Input placeholder="exampleusername" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
                                     </FormControl>
                                     <FormMessage className="font-medium text-xs" />
                                 </FormItem>
@@ -57,7 +62,20 @@ const Register = () => {
                                 <FormItem>
                                     <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">E-posta</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="E-posta" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
+                                        <Input placeholder="example@mail.com" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
+                                    </FormControl>
+                                    <FormMessage className="font-medium text-xs" />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Telefon numarası</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="xxx xxx xx xx" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
                                     </FormControl>
                                     <FormMessage className="font-medium text-xs" />
                                 </FormItem>
@@ -70,7 +88,7 @@ const Register = () => {
                                 <FormItem>
                                     <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Şifre</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Şifre" type="password" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
+                                        <Input placeholder="•••••" type="password" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
                                     </FormControl>
                                     <FormMessage className="font-medium text-xs" />
                                 </FormItem>
@@ -83,7 +101,7 @@ const Register = () => {
                                 <FormItem>
                                     <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Şifre (tekrar)</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Şifre (tekrar)" type="password" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
+                                        <Input placeholder="•••••" type="password" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
                                     </FormControl>
                                     <FormMessage className="font-medium text-xs" />
                                 </FormItem>

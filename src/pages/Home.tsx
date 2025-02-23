@@ -13,7 +13,7 @@ const Home = () => {
                         </p>
                     </div>
                     <div className="flex justify-center items-center">
-                        <img src="https://cdn.sstatic.net/Img/home/illo-home-hero.png?v=4718e8f857c5" alt="" />
+                        <img src="/hero.png" alt="" />
                     </div>
                 </div>
             </div>

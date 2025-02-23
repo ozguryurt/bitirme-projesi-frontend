@@ -5,12 +5,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import useModalStore from "@/store/modalStore"
+import useModalStore from "@/stores/modalStore"
 
 
-const Modal = ({ title, description, body }: { title: string, description: string, body: any }) => {
+const Modal: React.FC = () => {
 
-    const { status, setStatus } = useModalStore()
+    const { modalTitle, modalDescription, modalBody, status, setStatus } = useModalStore()
 
     return (
         <>
@@ -19,11 +19,11 @@ const Modal = ({ title, description, body }: { title: string, description: strin
                 <Dialog open={status} onOpenChange={setStatus}>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>{title}</DialogTitle>
-                            <DialogDescription>{description}</DialogDescription>
+                            <DialogTitle>{modalTitle}</DialogTitle>
+                            <DialogDescription>{modalDescription}</DialogDescription>
                         </DialogHeader>
                         <div>
-                            {(body)}
+                            {(modalBody)}
                         </div>
                     </DialogContent>
                 </Dialog>

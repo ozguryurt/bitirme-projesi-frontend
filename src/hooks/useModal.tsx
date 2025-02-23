@@ -1,4 +1,4 @@
-import useModalStore from "@/store/modalStore"
+import useModalStore from "@/stores/modalStore"
 import { ReactNode } from "react"
 
 type ModalType = {

@@ -22,8 +22,7 @@ const ThemeSelector = () => {
 
     useEffect(() => {
         if (localStorage.getItem("theme") == null) {
-            setTheme("dark")
-            localStorage.setItem("theme", "dark")
+            changeTheme("dark")
         } else {
             if (localStorage.getItem("theme") == "dark") {
                 changeTheme("dark")

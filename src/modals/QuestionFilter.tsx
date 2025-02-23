@@ -1,4 +1,4 @@
-import useFilterStore from '@/store/filterStore'
+import useFilterStore from '@/stores/filterStore'
 import { Checkbox } from "@/components/ui/checkbox"
 import { useLocation, useNavigate } from 'react-router';
 import { Button } from '../components/ui/button';

@@ -13,7 +13,7 @@ import {
 import useModal from "@/hooks/useModal"
 import { Plus } from "lucide-react"
 import QuestionFilter from "@/modals/QuestionFilter"
-import useFilterStore from "@/store/filterStore"
+import useFilterStore from "@/stores/filterStore"
 import { useEffect, useState } from "react"
 
 const Questions = () => {
