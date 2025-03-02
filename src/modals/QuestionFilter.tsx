@@ -4,8 +4,13 @@ import { useLocation, useNavigate } from 'react-router';
 import { Button } from '../components/ui/button';
 import useModal from '@/hooks/useModal';
 import { useEffect } from 'react';
+import useQuestion from '@/hooks/useQuestion';
 
 const QuestionFilter = () => {
+
+    const { getTags } = useQuestion()
+    const { tags, isLoading } = getTags();
+    const categories = tags?.map(tag => (tag.name));
 
     const { filters, setFilters, sortOrder } = useFilterStore()
     const { closeModal } = useModal()
@@ -22,8 +27,6 @@ const QuestionFilter = () => {
             setFilters([])
     }, [search])
 
-    const categories = ["javascript", "python", "java", "csharp"]
-
     const handleCheckedChange = async (checked: any, category: string) => {
         checked ? setFilters([...filters, category]) : setFilters(filters.filter((filter) => filter !== category))
     }
@@ -37,26 +40,33 @@ const QuestionFilter = () => {
     }
 
     return (
-        <div className="w-full flex flex-col gap-2">
-            {categories.map((category, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                    <Checkbox
-                        id={category}
-                        checked={filters.includes(category)}
-                        onCheckedChange={(value) => {
-                            handleCheckedChange(value, category)
-                        }}
-                    />
-                    <label
-                        htmlFor={category}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                        {category}
-                    </label>
-                </div>
-            ))}
-            <Button onClick={applyFilterButton}>Uygula</Button>
-        </div>
+        <>
+            {
+                isLoading === true ?
+                    <>Yükleniyor...</>
+                    :
+                    <div className="w-full flex flex-col gap-2 overflow-y-scroll">
+                        {categories.map((category, index) => (
+                            <div key={index} className="flex items-center space-x-2">
+                                <Checkbox
+                                    id={category}
+                                    checked={filters.includes(category)}
+                                    onCheckedChange={(value) => {
+                                        handleCheckedChange(value, category)
+                                    }}
+                                />
+                                <label
+                                    htmlFor={category}
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    {category}
+                                </label>
+                            </div>
+                        ))}
+                        <Button onClick={applyFilterButton}>Uygula</Button>
+                    </div>
+            }
+        </>
     )
 }
 

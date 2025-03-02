@@ -60,7 +60,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/register" element={<UnprivateRoute element={<Register />} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/settings" element={<PrivateRoute element={<Settings />} />} />
-          <Route path="/profile/:userId" element={<PrivateRoute element={<Profile />} />} />
+          <Route path="/profile/:userId" element={<Profile />} />
         </Route>
 
         {/* Admin sayfaları */}

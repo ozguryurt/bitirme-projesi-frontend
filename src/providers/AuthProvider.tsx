@@ -1,12 +1,13 @@
 import LoadingPage from '@/components/custom/LoadingPage';
+import ThemeSelector from '@/components/custom/ThemeSelector';
 import useAuthStore from '@/stores/authStore';
 import UserType from '@/types/UserType';
 import { createContext, useContext, useEffect, ReactNode, useState } from 'react';
 
 interface AuthContextType {
-    loginWithEmail: (username: string, password: string) => Promise<boolean>;
-    register: (username: string, password: string, passAgain: string, email: string, phone: string) => Promise<boolean>;
-    logout: () => void;
+    loginWithEmail: (username: string, password: string) => Promise<any>;
+    register: (username: string, password: string, passAgain: string, email: string, phone: string) => Promise<any>;
+    logout: () => Promise<any>;
     check: () => Promise<void>;
     userData: UserType | null;
 }
@@ -29,37 +30,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const { user, setUser } = useAuthStore();
     const [isLoading, setIsLoading] = useState<boolean>(true)
 
-    const loginWithEmail = async (email: string, password: string): Promise<boolean> => {
+    const loginWithEmail = async (email: string, password: string): Promise<any> => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API}/auth/login-with-email`, {
                 method: 'POST',
+                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password }),
             });
-
+            const data = await response.json();
             if (response.ok) {
-                const data = await response.json();
-                //localStorage.setItem('token', data.data.token);
-
-                let expires = "";
-                const date = new Date();
-                date.setTime(date.getTime() + (1 * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-                document.cookie = "token=" + (data.data.token || "") + expires + "; path=/";
-
                 setUser(data.data.user);
-                return true;
+                return data;
             }
-            return false;
+            return data;
         } catch (error) {
             console.error('Login error:', error);
             return false;
         }
     };
 
-    const register = async (username: string, password: string, passAgain: string, email: string, phone: string): Promise<boolean> => {
+    const register = async (username: string, password: string, passAgain: string, email: string, phone: string): Promise<any> => {
         if (password !== passAgain) {
             return false;
         }
@@ -73,27 +66,46 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 body: JSON.stringify({ nickname: username, password, email, tel: phone }),
             });
 
+            const data = await response.json();
             if (response.ok) {
-                const data = await response.json();
-                //localStorage.setItem('token', data.token);
-                //setUser({ username });
-                return true;
+                return data;
             }
-            return false;
+            return data;
         } catch (error) {
             console.error('Register error:', error);
             return false;
         }
     };
 
-    const logout = () => {
-        setUser(null);
-    }
+    const logout = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API}/auth/logout`, {
+                method: 'POST',
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setUser(null);
+                return data;
+            }
+            return data;
+        } catch (error) {
+            console.error('Login error:', error);
+            return false;
+        }
+    };
 
     const check = async (): Promise<void> => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API}/auth/autologin`, {
                 method: 'GET',
+                credentials: "include",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                }
             });
 
             if (response.ok) {
@@ -123,7 +135,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         <>
             {
                 isLoading === true ?
-                    <LoadingPage />
+                    <>
+                        <LoadingPage />
+                        <ThemeSelector />
+                    </>
                     :
                     <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
             }

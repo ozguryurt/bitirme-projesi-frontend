@@ -8,6 +8,8 @@ export default interface UserType {
     tel: string;
     role: string;
     avatar: string;
+    website: string;
+    about: string;
     CreatedAt: string | null;
     UpdatedAt: string | null;
     DeletedAt: string | null;

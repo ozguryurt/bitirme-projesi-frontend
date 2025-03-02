@@ -108,13 +108,17 @@ const MarkdownEditor = ({ placeholder, defaultValue, onValueChange }: { placehol
                 >
                     <Strikethrough />
                 </Button>
-                <Button
+                {
+                    /*
+                                    <Button
                     type="button"
                     onClick={handleImageInsertButton}
                     className="text-xs"
                 >
                     <Image />
                 </Button>
+                    */
+                }
                 <Button
                     type="button"
                     onClick={() => setPreviewMode(!previewMode)}

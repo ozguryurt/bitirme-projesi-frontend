@@ -15,11 +15,13 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import registerSchema from '@/schemas/registerSchema'
 import { useAuth } from "@/providers/AuthProvider"
+import { useToast } from "@/hooks/use-toast"
 
 
 const Register = () => {
 
     const { register } = useAuth()
+    const { toast } = useToast()
 
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
@@ -32,9 +34,25 @@ const Register = () => {
     })
 
     async function onSubmit(values: z.infer<typeof registerSchema>) {
-        console.log(values)  // Burada form verilerini işleyebilirsiniz
-        const response = await register(values.username, values.password, values.passwordAgain, values.email, values.phone)
-        console.log(response)
+        try {
+            const res = await register(values.username, values.password, values.passwordAgain, values.email, values.phone)
+            console.log(res)
+            if (res.status === true)
+                toast({
+                    title: "Bilgi",
+                    description: `Başarıyla kayıt oldunuz.`,
+                })
+            else
+                toast({
+                    title: "Bilgi",
+                    description: res.message[0],
+                })
+        } catch (error) {
+            toast({
+                title: "Bilgi",
+                description: `Bir hata meydana geldi, daha sonra tekrar deneyin.`,
+            })
+        }
     }
 
     return (

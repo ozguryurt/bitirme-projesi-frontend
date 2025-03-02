@@ -27,12 +27,35 @@ import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 import { useState } from "react"
 import NotificationCard from "./NotificationCard"
 import { useAuth } from "@/providers/AuthProvider"
+import { useToast } from "@/hooks/use-toast"
 
 const Header = () => {
 
     const { userData, logout } = useAuth()
+    const { toast } = useToast()
     const [tab, setTab] = useState<number>(0)
     const [open, setOpen] = useState<boolean>(false)
+
+    const handleLogout = async () => {
+        try {
+            const res = await logout()
+            if (res.status === true)
+                toast({
+                    title: "Bilgi",
+                    description: `Başarıyla çıkış yaptınız.`,
+                })
+            else
+                toast({
+                    title: "Bilgi",
+                    description: `Bir hata meydana geldi, daha sonra tekrar deneyin.`,
+                })
+        } catch (error) {
+            toast({
+                title: "Bilgi",
+                description: `Bir hata meydana geldi, daha sonra tekrar deneyin.`,
+            })
+        }
+    }
 
     return (
         <>
@@ -79,7 +102,7 @@ const Header = () => {
                             <NavigationMenuItem>
                                 <DropdownMenu open={open} onOpenChange={setOpen}>
                                     <DropdownMenuTrigger asChild>
-                                        <img src="https://www.gravatar.com/avatar/0dde57a178da66520b18e3a737b6d6ed?s=80&d=mp&r=g" alt="User profile picture" className="w-12 h-12 rounded-full cursor-pointer" />
+                                        <img src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${userData?.avatar}`} alt="User profile picture" className="w-12 h-12 rounded-full cursor-pointer" />
                                     </DropdownMenuTrigger>
                                     {
                                         tab === 0 &&
@@ -89,7 +112,7 @@ const Header = () => {
                                             <DropdownMenuGroup>
                                                 <DropdownMenuItem>
                                                     <User />
-                                                    <Link to="/profile/10" onClick={() => setOpen(false)}>
+                                                    <Link to={`/profile/${userData.uuid}`} onClick={() => setOpen(false)}>
                                                         Profil
                                                     </Link>
                                                 </DropdownMenuItem>
@@ -118,7 +141,7 @@ const Header = () => {
                                                 </DropdownMenuItem>
                                             </DropdownMenuGroup>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem onClick={logout}>
+                                            <DropdownMenuItem onClick={handleLogout}>
                                                 <LogOut />
                                                 <span>Çıkış yap</span>
                                             </DropdownMenuItem>

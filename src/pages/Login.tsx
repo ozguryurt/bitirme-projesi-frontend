@@ -16,10 +16,12 @@ import { z } from "zod"
 
 import loginSchema from '@/schemas/loginSchema'
 import { useAuth } from "@/providers/AuthProvider"
+import { useToast } from "@/hooks/use-toast"
 
 const Login = () => {
 
     const { loginWithEmail } = useAuth()
+    const { toast } = useToast()
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -30,7 +32,24 @@ const Login = () => {
     })
 
     async function onSubmit(values: z.infer<typeof loginSchema>) {
-        const response = await loginWithEmail(values.email, values.password)
+        try {
+            const res = await loginWithEmail(values.email, values.password)
+            if (res.status === true)
+                toast({
+                    title: "Bilgi",
+                    description: `Başarıyla giriş yaptınız.`,
+                })
+            else
+                toast({
+                    title: "Bilgi",
+                    description: `Hatalı kullanıcı adı veya şifre.`,
+                })
+        } catch (error) {
+            toast({
+                title: "Bilgi",
+                description: `Bir hata meydana geldi, daha sonra tekrar deneyin.`,
+            })
+        }
     }
 
     return (

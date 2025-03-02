@@ -12,201 +12,124 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import profileSchema from "@/schemas/profileSchema"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import Divider from "@/components/custom/Divider"
 import { SquarePen, X } from "lucide-react"
 import React, { useState } from "react"
 import { useParams } from "react-router"
 import { useAuth } from "@/providers/AuthProvider"
+import useUser from "@/hooks/useUser"
+import { useToast } from "@/hooks/use-toast"
+import avatarSchema from "@/schemas/avatarSchema"
 
 const Profile: React.FC = () => {
 
   const { userData } = useAuth()
+  const { userId } = useParams()
+  const { uploadAvatar, getUserByUUID } = useUser()
+  const { user, userIsLoading, userIsError } = getUserByUUID(userId!);
+  const { toast } = useToast()
 
   const [changePicture, setChangePicture] = useState<boolean>(false)
-  const { userId } = useParams()
 
-  const settingForm = useForm<z.infer<typeof profileSchema>>({
-    resolver: zodResolver(profileSchema),
+  const avatarForm = useForm<z.infer<typeof avatarSchema>>({
+    resolver: zodResolver(avatarSchema),
     defaultValues: {
-      username: userData!.nickname,
-      firstName: userData!.name,
-      lastName: userData!.lastname,
-      email: userData!.email,
-      website: userData!.lastname,
-      about: userData!.lastname,
-      password: "",
-      passwordAgain: "",
-      picture: undefined,
+      avatar: undefined,
     },
   })
 
-  const pictureRef = settingForm.register("picture");
+  const avatarRef = avatarForm.register("avatar");
 
-  function onSubmit(data: z.infer<typeof profileSchema>) {
-    console.log(data)
+  async function onSubmit(data: z.infer<typeof avatarSchema>) {
+    try {
+      const res = await uploadAvatar({ ...data, uuid: userData?.uuid })
+      if (res.status === true)
+        toast({
+          title: "Bilgi",
+          description: `Profil resminizi başarıyla değiştirdiniz.`,
+        })
+      else
+        toast({
+          title: "Bilgi",
+          description: `Bir hata meydana geldi, daha sonra tekrar deneyin.`,
+        })
+    } catch (error) {
+      toast({
+        title: "Bilgi",
+        description: `Bir hata meydana geldi, daha sonra tekrar deneyin.`,
+      })
+    }
   }
 
-  // Reset picture field
   const handleResetPicture = () => {
-    settingForm.setValue("picture", undefined);
+    avatarForm.setValue("avatar", undefined);
     setChangePicture(false);
   }
 
   return (
-    <div className="flex justify-center items-center px-5 lg:px-24 py-5 gap-5">
-      <Form {...settingForm}>
-        <form onSubmit={settingForm.handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full lg:w-6/12">
-          <p>User ID: {userId}</p>
-          <div className="flex justify-center items-center col-span-1 lg:col-span-2">
-            {
-              changePicture ?
-                <FormField
-                  control={settingForm.control}
-                  name="picture"
-                  render={({ field }) => {
-                    return (
-                      <FormItem className="w-full">
-                        <div className="flex justify-start items-center gap-3">
-                          <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Profil resmi</FormLabel>
-                          <X onClick={handleResetPicture} size={15} className="cursor-pointer" />
-                        </div>
-                        <FormControl>
-                          <Input
-                            type="file"
-                            placeholder="shadcn"
-                            {...pictureRef}
-                            onChange={(event) => {
-                              field.onChange(event.target?.files?.[0] ?? undefined);
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage className="font-medium text-xs" />
-                      </FormItem>
-                    );
-                  }}
-                />
-                :
-                <div className="relative">
-                  <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <SquarePen onClick={() => setChangePicture(!changePicture)} size={15} className="absolute -top-3 -right-3 cursor-pointer" />
-                </div>
-            }
-          </div>
-          <FormField
-            control={settingForm.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem className="col-span-1 lg:col-span-2">
-                <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Kullanıcı adı</FormLabel>
-                <FormControl>
-                  <Input placeholder="Kullanıcı adı" {...field} className="font-medium text-base text-zinc-800 dark:text-white" disabled />
-                </FormControl>
-                <FormMessage className="font-medium text-xs" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={settingForm.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem className="col-span-1">
-                <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Ad</FormLabel>
-                <FormControl>
-                  <Input placeholder="Ad" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
-                </FormControl>
-                <FormMessage className="font-medium text-xs" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={settingForm.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem className="col-span-1">
-                <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Soyad</FormLabel>
-                <FormControl>
-                  <Input placeholder="Soyad" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
-                </FormControl>
-                <FormMessage className="font-medium text-xs" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={settingForm.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="col-span-1">
-                <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">E-posta</FormLabel>
-                <FormControl>
-                  <Input placeholder="E-posta" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
-                </FormControl>
-                <FormMessage className="font-medium text-xs" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={settingForm.control}
-            name="website"
-            render={({ field }) => (
-              <FormItem className="col-span-1">
-                <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Website adresi</FormLabel>
-                <FormControl>
-                  <Input placeholder="Website adresi" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
-                </FormControl>
-                <FormMessage className="font-medium text-xs" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={settingForm.control}
-            name="about"
-            render={({ field }) => (
-              <FormItem className="col-span-1 lg:col-span-2">
-                <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Hakkımda</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Hakkımda" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
-                </FormControl>
-                <FormMessage className="font-medium text-xs" />
-              </FormItem>
-            )}
-          />
-          <Divider customClass="col-span-1 lg:col-span-2" />
-          <FormField
-            control={settingForm.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="col-span-1">
-                <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Şifre</FormLabel>
-                <FormControl>
-                  <Input placeholder="Şifre" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
-                </FormControl>
-                <FormMessage className="font-medium text-xs" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={settingForm.control}
-            name="passwordAgain"
-            render={({ field }) => (
-              <FormItem className="col-span-1">
-                <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Şifre (tekrar)</FormLabel>
-                <FormControl>
-                  <Input placeholder="Şifre (tekrar)" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
-                </FormControl>
-                <FormMessage className="font-medium text-xs" />
-              </FormItem>
-            )}
-          />
-          <Button className="col-span-1 lg:col-span-2" type="submit">Güncelle</Button>
-        </form>
-      </Form>
-    </div>
+    <>
+      {
+        userIsLoading === true ?
+          <>Yükleniyor...</>
+          :
+          user !== null ?
+            <div className="flex justify-center items-center px-5 lg:px-24 py-5 gap-5">
+              <div className="flex justify-center items-center flex-col gap-3">
+                {
+                  changePicture ?
+                    <Form {...avatarForm}>
+                      <form onSubmit={avatarForm.handleSubmit(onSubmit)} className="flex flex-col gap-6 w-full">
+                        <FormField
+                          control={avatarForm.control}
+                          name="avatar"
+                          render={({ field }) => {
+                            return (
+                              <FormItem className="w-full">
+                                <div className="flex justify-start items-center gap-3">
+                                  <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Profil resmi</FormLabel>
+                                  <X onClick={handleResetPicture} size={15} className="cursor-pointer" />
+                                </div>
+                                <FormControl>
+                                  <Input
+                                    type="file"
+                                    placeholder="shadcn"
+                                    {...avatarRef}
+                                    onChange={(event) => {
+                                      field.onChange(event.target?.files?.[0] ?? undefined);
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage className="font-medium text-xs" />
+                              </FormItem>
+                            );
+                          }}
+                        />
+                        <Button className="col-span-1 lg:col-span-2" type="submit">Güncelle</Button>
+                      </form>
+                    </Form>
+                    :
+                    <div className="relative">
+                      <Avatar className="w-32 h-32">
+                        <AvatarImage src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${user.avatar}`} />
+                        <AvatarFallback>{userData?.nickname}</AvatarFallback>
+                      </Avatar>
+                      {
+                        userData &&
+                        userData.uuid === userId &&
+                        <SquarePen onClick={() => setChangePicture(!changePicture)} size={15} className="absolute -top-3 -right-3 cursor-pointer" />
+                      }
+                    </div>
+                }
+                <p className="font-bold text-xl">@{user.nickname}</p>
+                <p className="font-medium text-sm">{user.email}</p>
+                <p className="font-medium text-sm">{user.website}</p>
+                <p className="font-medium text-sm">{user.about}</p>
+              </div>
+            </div>
+            :
+            <>Veri bulunamadı.</>
+      }
+    </>
   )
 }
 

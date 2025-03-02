@@ -15,6 +15,7 @@ import { Plus } from "lucide-react"
 import QuestionFilter from "@/modals/QuestionFilter"
 import useFilterStore from "@/stores/filterStore"
 import { useEffect, useState } from "react"
+import useQuestion from "@/hooks/useQuestion"
 
 const Questions = () => {
 
@@ -22,34 +23,10 @@ const Questions = () => {
     let navigate = useNavigate()
     const { showModal } = useModal()
 
-    const [selectedSort, setSelectedSort] = useState<string | null>(null)
+    const { getQuestions } = useQuestion()
+    const { questions, isLoading, isError } = getQuestions();
 
-    const questions = [
-        {
-            id: 1,
-            title: "Lorem ipsum dolor sit amet. 1",
-            description: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ab repellendus deserunt quia, magnam dolores ipsam libero tempore esse incidunt doloribus asperiores corrupti impedit at modi!",
-            tags: ["csharp", "c", "python"]
-        },
-        {
-            id: 2,
-            title: "Lorem ipsum dolor sit amet. 2",
-            description: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ab repellendus deserunt quia, magnam dolores ipsam libero tempore esse incidunt doloribus asperiores corrupti impedit at modi!",
-            tags: ["javascript", "c", "python"]
-        },
-        {
-            id: 3,
-            title: "Lorem ipsum dolor sit amet. 3",
-            description: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ab repellendus deserunt quia, magnam dolores ipsam libero tempore esse incidunt doloribus asperiores corrupti impedit at modi!",
-            tags: ["javascript", "csharp", "java"]
-        },
-        {
-            id: 4,
-            title: "Lorem ipsum dolor sit amet. 4",
-            description: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ab repellendus deserunt quia, magnam dolores ipsam libero tempore esse incidunt doloribus asperiores corrupti impedit at modi!",
-            tags: ["javascript", "csharp", "c"]
-        }
-    ]
+    const [selectedSort, setSelectedSort] = useState<string | null>(null)
 
     const { filters, setSortOrder } = useFilterStore()
 
@@ -96,16 +73,20 @@ const Questions = () => {
                     </Button>
                 </div>
                 {
-                    questions.map((question, index) => {
-                        return (
-                            <QuestionCard
-                                key={index}
-                                id={question.id}
-                                title={question.title}
-                                tags={question.tags}
-                            />
-                        );
-                    })
+                    isLoading === true ?
+                        <>Yükleniyor...</>
+                        :
+                        isError !== true ?
+                            questions?.map((question, index) => {
+                                return (
+                                    <QuestionCard
+                                        key={index}
+                                        data={question}
+                                    />
+                                );
+                            })
+                            :
+                            <>Bir hata meydana geldi, daha sonra tekrara deneyin.</>
                 }
             </div>
         </>

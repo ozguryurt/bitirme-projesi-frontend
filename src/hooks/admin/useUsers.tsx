@@ -1,3 +1,4 @@
+import { fetcher } from '@/lib/fetcher';
 import useSWR from 'swr';
 
 export interface User {
@@ -6,8 +7,6 @@ export interface User {
     email: string;
     age: number;
 }
-
-const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export const useUsers = () => {
     const { data, error } = useSWR('https://dummyjson.com/users', fetcher);
