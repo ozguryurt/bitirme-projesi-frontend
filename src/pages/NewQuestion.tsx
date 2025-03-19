@@ -18,6 +18,7 @@ import useQuestion from "@/hooks/useQuestion";
 import { useAuth } from "@/providers/AuthProvider";
 import useModal from "@/hooks/useModal";
 import { useState } from "react";
+import QuestionImage from "@/components/custom/QuestionImage";
 
 const NewQuestion = () => {
 
@@ -118,11 +119,7 @@ const NewQuestion = () => {
                     </FormItem>
                     <div className="grid grid-cols-8 gap-4">
                         {images.map((image, index) => (
-                            <img
-                                src={URL.createObjectURL(image)} // Dosyayı URL'ye çevir
-                                alt={`Uploaded ${index + 1}`}
-                                className="w-full h-full rounded-lg"
-                            />
+                            <QuestionImage key={index} path={URL.createObjectURL(image)} customClassName="w-full h-full rounded-lg" />
                         ))}
                     </div>
 

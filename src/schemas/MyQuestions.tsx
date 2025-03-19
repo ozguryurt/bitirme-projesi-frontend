@@ -1,4 +1,4 @@
-import { useUsers, User } from '@/hooks/admin/useUsers';
+import { useAdmin } from '@/hooks/admin/useAdmin';
 import ErrorPage from '@/components/custom/ErrorPage';
 import LoadingPage from '@/components/custom/LoadingPage';
 
@@ -17,7 +17,7 @@ import {
 import { DataTable } from '@/components/custom/DataTable';
 
 const MyQuestions = () => {
-    const { users, isLoading, isError } = useUsers();
+    const { users, isLoading, isError } = useAdmin();
 
     const columns: ColumnDef<User>[] = [
         {

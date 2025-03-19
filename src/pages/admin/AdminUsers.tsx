@@ -1,4 +1,3 @@
-import { useUsers, User } from '@/hooks/admin/useUsers';
 import ErrorPage from '@/components/custom/ErrorPage';
 import LoadingPage from '@/components/custom/LoadingPage';
 
@@ -15,26 +14,26 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTable } from '@/components/custom/DataTable';
+import UserType from '@/types/UserType';
+import { useAdmin } from '@/hooks/admin/useAdmin';
+import { Link } from 'react-router';
 
 const AdminUsers = () => {
-    const { users, isLoading, isError } = useUsers();
+    const { getUsers } = useAdmin()
+    const { users, usersIsLoading, usersIsError } = getUsers()
 
-    const columns: ColumnDef<User>[] = [
+    const columns: ColumnDef<UserType>[] = [
         {
-            accessorKey: "id",
-            header: "ID",
+            accessorKey: "uuid",
+            header: "UUID",
         },
         {
-            accessorKey: "username",
+            accessorKey: "nickname",
             header: "Kullanıcı adı",
         },
         {
             accessorKey: "email",
             header: "E-posta",
-        },
-        {
-            accessorKey: "age",
-            header: "Yaş",
         },
         {
             id: "actions",
@@ -52,13 +51,10 @@ const AdminUsers = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(user.id.toString())}
-                            >
-                                Copy user ID
-                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View user</DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Link to={`/profile/${user.uuid}`}>Kullanıcıyı görüntüle</Link>
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 );
@@ -66,9 +62,9 @@ const AdminUsers = () => {
         },
     ];
 
-    if (isError) return <ErrorPage />;
+    if (usersIsError) return <ErrorPage />;
 
-    if (isLoading) return <LoadingPage />;
+    if (usersIsLoading) return <LoadingPage />;
 
     return (
         <div className="w-full min-h-screen flex flex-col justify-center items-center gap-3 px-5 lg:px-24 py-5">

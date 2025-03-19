@@ -6,6 +6,8 @@ import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { ChartLegend, ChartLegendContent } from "@/components/ui/chart"
 import HomeInfoCard from "@/components/custom/admin/HomeInfoCard"
 import HomeUserCard from "@/components/custom/admin/HomeUserCard"
+import { useAdmin } from "@/hooks/admin/useAdmin"
+import UserType from "@/types/UserType"
 
 const chartData = [
   { ay: "Ocak", sorular: 186, cevaplar: 80 },
@@ -28,19 +30,24 @@ const chartConfig = {
 } satisfies ChartConfig
 
 const AdminHome = () => {
+
+  const { getUsers, getQuestions } = useAdmin()
+  const { users, usersIsLoading, usersIsError } = getUsers()
+  const { questions, questionsIsLoading, questionsIsError } = getQuestions()
+
   return (
     <div className="w-full flex flex-col justify-center items-center gap-12 px-5 lg:px-24 py-5">
       <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-3">
         <HomeInfoCard
           title={`Kullanıcılar`}
           icon={Users}
-          count={`1.300`}
+          count={users?.length.toString()!}
           subtitle={`Son 1 ayda %20.1 artış`}
         />
         <HomeInfoCard
           title={`Sorular`}
           icon={ShieldQuestion}
-          count={`1.300`}
+          count={questions?.length.toString()!}
           subtitle={`Son 1 ayda %20.1 artış`}
         />
         <HomeInfoCard
@@ -75,31 +82,18 @@ const AdminHome = () => {
               <div className="font-semibold leading-none tracking-tight">Son üyeler</div>
               <div className="text-sm text-muted-foreground">Bu ay yeni 150 üye katıldı.</div>
             </div>
-            <HomeUserCard
-              imgUrl={"https://www.gravatar.com/avatar/0dde57a178da66520b18e3a737b6d6ed?s=80&d=mp&r=g"}
-              username={"admin"}
-              email={"test@mail.com"}
-            />
-            <HomeUserCard
-              imgUrl={"https://www.gravatar.com/avatar/0dde57a178da66520b18e3a737b6d6ed?s=80&d=mp&r=g"}
-              username={"admin"}
-              email={"test@mail.com"}
-            />
-            <HomeUserCard
-              imgUrl={"https://www.gravatar.com/avatar/0dde57a178da66520b18e3a737b6d6ed?s=80&d=mp&r=g"}
-              username={"admin"}
-              email={"test@mail.com"}
-            />
-            <HomeUserCard
-              imgUrl={"https://www.gravatar.com/avatar/0dde57a178da66520b18e3a737b6d6ed?s=80&d=mp&r=g"}
-              username={"admin"}
-              email={"test@mail.com"}
-            />
-            <HomeUserCard
-              imgUrl={"https://www.gravatar.com/avatar/0dde57a178da66520b18e3a737b6d6ed?s=80&d=mp&r=g"}
-              username={"admin"}
-              email={"test@mail.com"}
-            />
+            {
+              users.slice(0, 5).map((user: UserType, index: number) => {
+                return (
+                  <HomeUserCard
+                    key={index}
+                    imgUrl={`${import.meta.env.VITE_IMAGE_BASEPATH}/${user.avatar}`}
+                    username={user.nickname}
+                    email={user.email}
+                  />
+                )
+              })
+            }
           </div>
         </div>
       </div>

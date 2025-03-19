@@ -21,6 +21,7 @@ import { timeAgo } from "@/lib/timeAgo"
 import useModal from "@/hooks/useModal"
 import { useAuth } from "@/providers/AuthProvider"
 import { marked } from "marked"
+import QuestionImage from "@/components/custom/QuestionImage"
 
 const Question = () => {
 
@@ -40,7 +41,7 @@ const Question = () => {
     })
 
     const renderPreview = () => {
-        return { __html: marked(question?.content!) }; // breaks:true ile satır sonu desteklenir
+        return { __html: marked(question?.content || "", { breaks: true }) };
     };
 
     async function onSubmit(values: z.infer<typeof questionReplySendSchema>) {
@@ -86,7 +87,7 @@ const Question = () => {
                                 </div>
                             </Link>
                             <div
-                                className="w-full min-h-[200px] border rounded p-2 overflow-x-clip"
+                                className="w-full min-h-[200px] overflow-x-clip break-words"
                                 dangerouslySetInnerHTML={renderPreview()}
                             />
                             <div className="w-full flex flex-wrap gap-3">
@@ -94,6 +95,18 @@ const Question = () => {
                                     question?.Tags?.map((tag, index) => <Link to={`/questions?tags=${tag.uuid}`} key={index} className="font-medium text-blue-500 text-xs">#{tag.name}</Link>)
                                 }
                             </div>
+                            {
+                                question.image !== null &&
+                                <div className="grid grid-cols-6 gap-3">
+                                    {
+                                        question.image.map((img: string, index: number) => {
+                                            return (
+                                                <QuestionImage key={index} path={img} customClassName="w-full h-32" />
+                                            )
+                                        })
+                                    }
+                                </div>
+                            }
                             <Divider />
                             <Form {...form}>
                                 <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">

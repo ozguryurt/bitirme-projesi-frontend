@@ -1,4 +1,4 @@
-import { useUsers, User } from '@/hooks/admin/useUsers';
+import { useAdmin } from '@/hooks/admin/useAdmin';
 import ErrorPage from '@/components/custom/ErrorPage';
 import LoadingPage from '@/components/custom/LoadingPage';
 
@@ -15,32 +15,35 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTable } from '@/components/custom/DataTable';
+import QuestionType from '@/types/question/QuestionType';
+import { formatDate } from '@/lib/formatDate';
+import { Link } from 'react-router';
 
 const AdminQuestions = () => {
-    const { users, isLoading, isError } = useUsers();
+    const { getQuestions } = useAdmin()
+    const { questions, questionsIsLoading, questionsIsError } = getQuestions()
 
-    const columns: ColumnDef<User>[] = [
+    const columns: ColumnDef<QuestionType>[] = [
         {
-            accessorKey: "id",
-            header: "ID",
+            accessorKey: "uuid",
+            header: "UUID",
         },
         {
-            accessorKey: "username",
-            header: "Kullanıcı adı",
+            accessorKey: "CreatedAt",
+            header: "Oluşturma",
+            cell: ({ row }) => {
+                return <>{formatDate(row.original.CreatedAt)}</>
+            },
         },
         {
-            accessorKey: "email",
-            header: "E-posta",
-        },
-        {
-            accessorKey: "age",
-            header: "Yaş",
+            accessorKey: "User.nickname",
+            header: "Soran",
         },
         {
             id: "actions",
             header: "İşlem",
             cell: ({ row }) => {
-                const user = row.original;
+                const question = row.original;
 
                 return (
                     <DropdownMenu>
@@ -52,13 +55,13 @@ const AdminQuestions = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(user.id.toString())}
-                            >
-                                Copy user ID
-                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View user</DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Link to={`/question/${question.uuid}`}>Soruya git</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Link to={`/profile/${question.User.uuid}`}>Kullanıcıyı görüntüle</Link>
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 );
@@ -66,13 +69,13 @@ const AdminQuestions = () => {
         },
     ];
 
-    if (isError) return <ErrorPage />;
+    if (questionsIsError) return <ErrorPage />;
 
-    if (isLoading) return <LoadingPage />;
+    if (questionsIsLoading) return <LoadingPage />;
 
     return (
         <div className="w-full min-h-screen flex flex-col justify-center items-center gap-3 px-5 lg:px-24 py-5">
-            <DataTable columns={columns} data={users} itemPerPage={5} />
+            <DataTable columns={columns} data={questions!} itemPerPage={5} />
         </div>
     );
 };
