@@ -15,7 +15,7 @@ import { z } from "zod"
 import questionReplySendSchema from "@/schemas/questionReplySendSchema"
 import { Button } from "@/components/ui/button"
 import CommentCard from "@/components/custom/CommentCard"
-import { SquarePen } from "lucide-react"
+import { SquarePen, Trash } from "lucide-react"
 import useQuestion from "@/hooks/useQuestion"
 import { timeAgo } from "@/lib/timeAgo"
 import useModal from "@/hooks/useModal"
@@ -26,12 +26,12 @@ import QuestionImage from "@/components/custom/QuestionImage"
 const Question = () => {
 
     const { userData } = useAuth()
-    const { showModal } = useModal()
+    const { showModal, showYesNoModal } = useModal()
 
     const { questionId } = useParams<string>()
-    const { createComment, getQuestionByUUID, getQuestionCommentsByUUID } = useQuestion()
+    const { createComment, getQuestionByUUID, getQuestionCommentsByUUID, deleteQuestion } = useQuestion()
     const { question, questionIsLoading, questionIsError } = getQuestionByUUID(questionId!);
-    const { comments, commentsIsLoading, commentsIsError } = getQuestionCommentsByUUID(questionId!);
+    const { comments, commentsIsLoading, commentsIsError, commentsMutate } = getQuestionCommentsByUUID(questionId!);
 
     const form = useForm<z.infer<typeof questionReplySendSchema>>({
         resolver: zodResolver(questionReplySendSchema),
@@ -54,6 +54,14 @@ const Question = () => {
         } catch (error) {
             showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin.", <></>)
         }
+        finally {
+            form.reset()
+            await commentsMutate()
+        }
+    }
+
+    const handleDeleteQuestion = async () => {
+        showYesNoModal("Soruyu silmek istediğinize emin misiniz?", () => deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! }))
     }
 
     return (
@@ -71,6 +79,12 @@ const Question = () => {
                                 <Link to={`/edit-question`}>
                                     <SquarePen />
                                 </Link>
+                                {
+                                    userData?.uuid === question.User.uuid &&
+                                    <Button variant="destructive" onClick={handleDeleteQuestion}>
+                                        <Trash />
+                                    </Button>
+                                }
                             </div>
                             <p className="w-full font-medium text-xs truncate">
                                 #{question?.uuid}
@@ -101,7 +115,7 @@ const Question = () => {
                                     {
                                         question.image.map((img: string, index: number) => {
                                             return (
-                                                <QuestionImage key={index} path={img} customClassName="w-full h-32" />
+                                                <QuestionImage key={index} path={img} />
                                             )
                                         })
                                     }

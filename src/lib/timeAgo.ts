@@ -14,6 +14,6 @@ export const timeAgo = (isoDate: string): string => {
     } else if (diffInSeconds < 31536000) {
         return `${Math.floor(diffInSeconds / 2592000)} ay önce`;
     } else {
-        return "1 yıldan fazla önce";
+        return "1 yıldan fazla süre önce";
     }
 };

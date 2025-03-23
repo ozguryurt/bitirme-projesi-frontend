@@ -1,4 +1,5 @@
 import { fetcher } from "@/lib/fetcher";
+import QuestionType from "@/types/question/QuestionType";
 import UploadAvatarType from "@/types/user/UploadAvatarType";
 import UserType from "@/types/UserType";
 import useSWR from "swr";
@@ -50,9 +51,27 @@ const useUser = () => {
         };
     };
 
+    const getUserQuestions = (uuid: string): {
+        questions: QuestionType[] | null;
+        questionsIsLoading: boolean;
+        questionsIsError: any;
+    } => {
+        const { data, error, isLoading } = useSWR<{ data: QuestionType[] }>(
+            `${import.meta.env.VITE_API}/question/by/${uuid}`,
+            fetcher
+        );
+
+        return {
+            questions: data ? data.data : null,
+            questionsIsLoading: isLoading,
+            questionsIsError: error,
+        };
+    };
+
     return {
         uploadAvatar,
-        getUserByUUID
+        getUserByUUID,
+        getUserQuestions
     };
 };
 

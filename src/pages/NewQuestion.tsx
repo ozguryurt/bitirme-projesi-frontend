@@ -17,7 +17,7 @@ import MarkdownEditor from "@/components/custom/MarkdownEditor";
 import useQuestion from "@/hooks/useQuestion";
 import { useAuth } from "@/providers/AuthProvider";
 import useModal from "@/hooks/useModal";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import QuestionImage from "@/components/custom/QuestionImage";
 
 const NewQuestion = () => {
@@ -29,6 +29,8 @@ const NewQuestion = () => {
     const { tags, isLoading } = getTags();
     const frameworksList = tags?.map(tag => ({ value: tag.uuid, label: tag.name }));
 
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     const newQuestionForm = useForm<z.infer<typeof newQuestionFormSchema>>({
         resolver: zodResolver(newQuestionFormSchema),
         defaultValues: {
@@ -38,28 +40,38 @@ const NewQuestion = () => {
         },
     });
 
-    const pictureRef = newQuestionForm.register("form");
-
     const [images, setImages] = useState<File[]>([]);
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const files = Array.from(event.target.files); // Dosyaları diziye çevir
             setImages((prevImages) => [...prevImages, ...files]); // State'i güncelle
+            if (fileInputRef.current)
+                fileInputRef.current.value = "";
         }
     };
+    const handleRemoveImage = (index: number) => setImages((prev) => prev.filter((_, i) => i !== index));
 
     const onSubmit = async (values: z.infer<typeof newQuestionFormSchema>) => {
         try {
-            console.log({ ...values, user_uuid: userData?.uuid! })
-            const res = await createQuestion({ ...values, user_uuid: userData?.uuid! })
+            const formData = {
+                ...values,
+                user_uuid: userData?.uuid!,
+                form: images,
+            };
+            console.log(formData);
+            const res = await createQuestion(formData);
             if (res?.status === true)
-                showModal("Başarılı", "Başarıyla soru oluşturdunuz.", <></>)
+                showModal("Başarılı", "Başarıyla soru oluşturdunuz.", <></>);
             else
-                showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin.", <></>)
+                showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin.", <></>);
         } catch (error) {
-            showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin." + error, <></>)
+            showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin." + error, <></>);
+        } finally {
+            newQuestionForm.reset();
+            setImages([])
         }
-    }
+    };
+
 
     return (
         <div className="w-full flex flex-col gap-3 px-5 lg:px-24 py-5">
@@ -107,10 +119,10 @@ const NewQuestion = () => {
                         </div>
                         <FormControl>
                             <Input
+                                ref={fileInputRef}
                                 type="file"
                                 accept="image/*"
                                 placeholder="shadcn"
-                                {...pictureRef}
                                 multiple
                                 onChange={handleFileChange}
                             />
@@ -119,7 +131,7 @@ const NewQuestion = () => {
                     </FormItem>
                     <div className="grid grid-cols-8 gap-4">
                         {images.map((image, index) => (
-                            <QuestionImage key={index} path={URL.createObjectURL(image)} customClassName="w-full h-full rounded-lg" />
+                            <QuestionImage key={index} path={URL.createObjectURL(image)} onClickFn={() => handleRemoveImage(index)} />
                         ))}
                     </div>
 

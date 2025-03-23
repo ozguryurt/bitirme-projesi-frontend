@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { marked } from "marked";
-import useModal from "@/hooks/useModal";
-import { Bold, Eye, Image, Italic, Pen, Strikethrough } from "lucide-react";
+import { Bold, Eye, Italic, Pen, Strikethrough } from "lucide-react";
 
 // Markdown için line breaks aktif hale getiriliyor
 marked.setOptions({
@@ -14,8 +12,6 @@ marked.setOptions({
 const MarkdownEditor = ({ placeholder, defaultValue, onValueChange }: { placeholder: string, defaultValue: string, onValueChange: (value: string) => void }) => {
     const [markdownText, setMarkdownText] = useState<string>(defaultValue); // Markdown içeriği
     const [previewMode, setPreviewMode] = useState<boolean>(false); // Önizleme modu kontrolü
-
-    const { showModal, closeModal } = useModal();
 
     // Metni Markdown etiketi ile sarmalar veya imleç konumuna ekler
     const insertText = (syntax: string, endSyntax: string = "") => {
@@ -55,32 +51,6 @@ const MarkdownEditor = ({ placeholder, defaultValue, onValueChange }: { placehol
     // Markdown içeriğini HTML'ye dönüştürme
     const renderPreview = () => {
         return { __html: marked(markdownText) }; // breaks:true ile satır sonu desteklenir
-    };
-
-    const handleImageInsertButton = () => {
-        let imageURL = "";
-        showModal(
-            "Resim ekle",
-            "",
-            <div className="w-full flex flex-col gap-3">
-                <Input
-                    type="text"
-                    placeholder="Resim URL'si"
-                    onChange={(e) => (imageURL = e.target.value)}
-                />
-                <Button
-                    onClick={() => {
-                        if (imageURL) {
-                            setMarkdownText((prev) => `${prev}![Image](${imageURL})`);
-                            onValueChange(`${markdownText}![Image](${imageURL})`);
-                            closeModal();
-                        }
-                    }}
-                >
-                    Ekle
-                </Button>
-            </div>
-        );
     };
 
     return (

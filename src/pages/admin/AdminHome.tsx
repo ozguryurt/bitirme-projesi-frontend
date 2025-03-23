@@ -83,7 +83,7 @@ const AdminHome = () => {
               <div className="text-sm text-muted-foreground">Bu ay yeni 150 üye katıldı.</div>
             </div>
             {
-              users.slice(0, 5).map((user: UserType, index: number) => {
+              users?.slice(0, 5).map((user: UserType, index: number) => {
                 return (
                   <HomeUserCard
                     key={index}

@@ -1,4 +1,3 @@
-import { useAdmin } from '@/hooks/admin/useAdmin';
 import ErrorPage from '@/components/custom/ErrorPage';
 import LoadingPage from '@/components/custom/LoadingPage';
 
@@ -15,32 +14,38 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTable } from '@/components/custom/DataTable';
+import useUser from '@/hooks/useUser';
+import { useAuth } from '@/providers/AuthProvider';
+import QuestionType from '@/types/question/QuestionType';
+import { formatDate } from '@/lib/formatDate';
+import { Link } from 'react-router';
 
 const MyQuestions = () => {
-    const { users, isLoading, isError } = useAdmin();
+    const { userData } = useAuth()
+    const { getUserQuestions } = useUser();
+    const { questions, questionsIsLoading, questionsIsError } = getUserQuestions(userData?.uuid!)
 
-    const columns: ColumnDef<User>[] = [
+    const columns: ColumnDef<QuestionType>[] = [
         {
-            accessorKey: "id",
+            accessorKey: "uuid",
             header: "ID",
         },
         {
-            accessorKey: "username",
-            header: "Kullanıcı adı",
+            accessorKey: "header",
+            header: "Başlık",
         },
         {
-            accessorKey: "email",
-            header: "E-posta",
-        },
-        {
-            accessorKey: "age",
-            header: "Yaş",
+            accessorKey: "CreatedAd",
+            header: "Oluşturma",
+            cell: ({ row }) => {
+                return <>{formatDate(row.original.CreatedAt)}</>
+            },
         },
         {
             id: "actions",
             header: "İşlem",
             cell: ({ row }) => {
-                const user = row.original;
+                const question = row.original;
 
                 return (
                     <DropdownMenu>
@@ -52,13 +57,10 @@ const MyQuestions = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(user.id.toString())}
-                            >
-                                Copy user ID
-                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View user</DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Link to={`/question/${question.uuid}`}>Soruya git</Link>
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 );
@@ -66,13 +68,13 @@ const MyQuestions = () => {
         },
     ];
 
-    if (isError) return <ErrorPage />;
+    if (questionsIsError) return <ErrorPage />;
 
-    if (isLoading) return <LoadingPage />;
+    if (questionsIsLoading) return <LoadingPage />;
 
     return (
         <div className="w-full min-h-screen flex flex-col justify-center items-center gap-3 px-5 lg:px-24 py-5">
-            <DataTable columns={columns} data={users} itemPerPage={5} />
+            <DataTable columns={columns} data={questions!} itemPerPage={5} />
         </div>
     );
 };

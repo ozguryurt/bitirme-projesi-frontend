@@ -2,6 +2,7 @@ import { fetcher } from '@/lib/fetcher';
 import CommentType from '@/types/question/CommentType';
 import CreateCommentType from '@/types/question/CreateCommentType';
 import CreateQuestionType from '@/types/question/CreateQuestionType';
+import DeleteQuestionType from '@/types/question/DeleteQuestionType';
 import QuestionTagType from '@/types/question/QuestionTagType';
 import QuestionType from '@/types/question/QuestionType';
 import useSWR from 'swr';
@@ -58,8 +59,9 @@ const useQuestion = () => {
         comments: CommentType[] | null;
         commentsIsLoading: boolean;
         commentsIsError: any;
+        commentsMutate: () => void;
     } => {
-        const { data, error, isLoading } = useSWR<{ data: CommentType[] }>(
+        const { data, error, isLoading, mutate } = useSWR<{ data: CommentType[] }>(
             `${import.meta.env.VITE_API}/comment/${uuid}/comments`,
             fetcher
         );
@@ -68,6 +70,7 @@ const useQuestion = () => {
             comments: data ? data.data : null,
             commentsIsLoading: isLoading,
             commentsIsError: error,
+            commentsMutate: mutate
         };
     };
 
@@ -106,6 +109,27 @@ const useQuestion = () => {
         }
     };
 
+    const deleteQuestion = async (questionData: DeleteQuestionType) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API}/question/${questionData.question_uuid}`, {
+                method: 'DELETE',
+                credentials: "include",
+                body: JSON.stringify({
+                    user_uuid: questionData.user_uuid
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create question.');
+            }
+
+            const newQuestion = await response.json();
+            return newQuestion;
+        } catch (error) {
+            throw error;
+        }
+    }
+
 
     const createComment = async (commentData: CreateCommentType) => {
         try {
@@ -136,7 +160,8 @@ const useQuestion = () => {
         createQuestion,
         getQuestionByUUID,
         getQuestionCommentsByUUID,
-        createComment
+        createComment,
+        deleteQuestion
     };
 };
 

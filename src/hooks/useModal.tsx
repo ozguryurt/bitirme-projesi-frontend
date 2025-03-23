@@ -1,9 +1,11 @@
+import { Button } from "@/components/ui/button"
 import useModalStore from "@/stores/modalStore"
 import { ReactNode } from "react"
 
 type ModalType = {
     showModal: (title: string, description: string, body: ReactNode) => void
     closeModal: () => void
+    showYesNoModal: (text: string, yesBtnFn: () => void) => void
 }
 
 const useModal = (): ModalType => {
@@ -16,6 +18,18 @@ const useModal = (): ModalType => {
         setModalBody(body)
     }
 
+    const showYesNoModal = (text: string, yesBtnFn: () => void) => {
+        setStatus(true)
+        setModalTitle("Bilgi")
+        setModalDescription("")
+        setModalBody(<>
+            <div className="flex flex-col justify-center items-start gap-3">
+                <p className="text-sm">{text}</p>
+                <Button onClick={yesBtnFn}>Onayla</Button>
+            </div>
+        </>)
+    }
+
     const closeModal = () => {
         setStatus(false)
         setModalTitle("")
@@ -23,7 +37,7 @@ const useModal = (): ModalType => {
         setModalBody(<></>)
     }
 
-    return { showModal, closeModal }
+    return { showModal, closeModal, showYesNoModal }
 }
 
 export default useModal

@@ -20,7 +20,7 @@ import DashboardLayout from './layouts/DashboardLayout';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminQuestions from './pages/admin/AdminQuestions';
 import EditQuestion from './pages/EditQuestion';
-import MyQuestions from './schemas/MyQuestions';
+import MyQuestions from './pages/MyQuestions';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
@@ -41,7 +41,7 @@ const PrivateRoute = ({ element }: { element: JSX.Element }) => {
 // Admin rota: Admin girişi yapılmadıysa admin login sayfasına yönlendir
 const AdminRoute = ({ element }: { element: JSX.Element }) => {
   const { user } = useAuthStore();
-  return (user !== null) ? element : <Navigate to="/admin/login" />;
+  return (user !== null && user.role === "admin") ? element : <Navigate to="/" />;
 };
 
 createRoot(document.getElementById('root')!).render(

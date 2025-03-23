@@ -23,7 +23,7 @@ import avatarSchema from "@/schemas/avatarSchema"
 
 const Profile: React.FC = () => {
 
-  const { userData } = useAuth()
+  const { userData, check } = useAuth()
   const { userId } = useParams()
   const { uploadAvatar, getUserByUUID } = useUser()
   const { user, userIsLoading, userIsError } = getUserByUUID(userId!);
@@ -53,11 +53,14 @@ const Profile: React.FC = () => {
           title: "Bilgi",
           description: `Bir hata meydana geldi, daha sonra tekrar deneyin.`,
         })
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Bilgi",
-        description: `Bir hata meydana geldi, daha sonra tekrar deneyin.`,
+        description: error.toString(),
       })
+    }
+    finally {
+      await check()
     }
   }
 
