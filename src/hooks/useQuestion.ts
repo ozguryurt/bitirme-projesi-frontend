@@ -5,9 +5,11 @@ import CreateQuestionType from '@/types/question/CreateQuestionType';
 import DeleteQuestionType from '@/types/question/DeleteQuestionType';
 import QuestionTagType from '@/types/question/QuestionTagType';
 import QuestionType from '@/types/question/QuestionType';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 
 const useQuestion = () => {
+
+    const { mutate } = useSWRConfig();
 
     // Tagları çek
     const getTags = (): {
@@ -111,9 +113,12 @@ const useQuestion = () => {
 
     const deleteQuestion = async (questionData: DeleteQuestionType) => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API}/question/${questionData.question_uuid}`, {
+            const response = await fetch(`${import.meta.env.VITE_API}/question/${questionData.question_uuid}/delete`, {
                 method: 'DELETE',
                 credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({
                     user_uuid: questionData.user_uuid
                 })
@@ -124,6 +129,7 @@ const useQuestion = () => {
             }
 
             const newQuestion = await response.json();
+            mutate(`${import.meta.env.VITE_API}/question`, undefined, { revalidate: true }); // Soru silindiğinde yeni verileri çeksin
             return newQuestion;
         } catch (error) {
             throw error;

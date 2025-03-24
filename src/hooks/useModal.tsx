@@ -25,7 +25,7 @@ const useModal = (): ModalType => {
         setModalBody(<>
             <div className="flex flex-col justify-center items-start gap-3">
                 <p className="text-sm">{text}</p>
-                <Button onClick={yesBtnFn}>Onayla</Button>
+                <Button className="text-xs p-1" onClick={yesBtnFn}>Onayla</Button>
             </div>
         </>)
     }

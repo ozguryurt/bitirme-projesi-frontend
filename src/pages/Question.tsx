@@ -1,5 +1,5 @@
 import Divider from "@/components/custom/Divider"
-import { Link, useParams } from "react-router"
+import { Link, useNavigate, useParams } from "react-router"
 import {
     Form,
     FormControl,
@@ -27,6 +27,7 @@ const Question = () => {
 
     const { userData } = useAuth()
     const { showModal, showYesNoModal } = useModal()
+    let navigate = useNavigate();
 
     const { questionId } = useParams<string>()
     const { createComment, getQuestionByUUID, getQuestionCommentsByUUID, deleteQuestion } = useQuestion()
@@ -61,7 +62,19 @@ const Question = () => {
     }
 
     const handleDeleteQuestion = async () => {
-        showYesNoModal("Soruyu silmek istediğinize emin misiniz?", () => deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! }))
+        try {
+            showYesNoModal("Soruyu silmek istediğinize emin misiniz?", async () => {
+                const res = await deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! })
+                if (res?.status === true) {
+                    showModal("Başarılı", "Başarıyla soruyu sildiniz.", <></>)
+                    setTimeout(() => {
+                        navigate("/questions")
+                    }, 1 * 1000);
+                }
+            })
+        } catch (error) {
+            showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin.", <></>)
+        }
     }
 
     return (
