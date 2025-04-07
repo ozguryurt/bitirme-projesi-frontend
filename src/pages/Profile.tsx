@@ -13,13 +13,14 @@ import {
 } from "@/components/ui/form"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
-import { SquarePen, X } from "lucide-react"
+import { SquarePen } from "lucide-react"
 import React, { useState } from "react"
 import { useParams } from "react-router"
 import { useAuth } from "@/providers/AuthProvider"
 import useUser from "@/hooks/useUser"
 import { useToast } from "@/hooks/use-toast"
 import avatarSchema from "@/schemas/avatarSchema"
+import LoadingIcon from "@/components/custom/LoadingIcon"
 
 const Profile: React.FC = () => {
 
@@ -42,7 +43,7 @@ const Profile: React.FC = () => {
 
   async function onSubmit(data: z.infer<typeof avatarSchema>) {
     try {
-      const res = await uploadAvatar({ ...data, uuid: userData?.uuid })
+      const res = await uploadAvatar({ avatar: data.avatar, uuid: userData?.uuid! })
       if (res.status === true)
         toast({
           title: "Bilgi",
@@ -72,26 +73,20 @@ const Profile: React.FC = () => {
   return (
     <>
       {
-        userIsLoading === true ?
-          <>Yükleniyor...</>
-          :
-          user !== null ?
+        userIsError ? <>Bir hata meydana geldi.</> :
+          userIsLoading ? <LoadingIcon /> : user ?
             <div className="flex justify-center items-center px-5 lg:px-24 py-5 gap-5">
               <div className="flex justify-center items-center flex-col gap-3">
                 {
                   changePicture ?
                     <Form {...avatarForm}>
-                      <form onSubmit={avatarForm.handleSubmit(onSubmit)} className="flex flex-col gap-6 w-full">
+                      <form onSubmit={avatarForm.handleSubmit(onSubmit)} className="flex flex-col gap-x-6 gap-y-2 w-full">
                         <FormField
                           control={avatarForm.control}
                           name="avatar"
                           render={({ field }) => {
                             return (
                               <FormItem className="w-full">
-                                <div className="flex justify-start items-center gap-3">
-                                  <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Profil resmi</FormLabel>
-                                  <X onClick={handleResetPicture} size={15} className="cursor-pointer" />
-                                </div>
                                 <FormControl>
                                   <Input
                                     type="file"
@@ -108,6 +103,7 @@ const Profile: React.FC = () => {
                           }}
                         />
                         <Button className="col-span-1 lg:col-span-2" type="submit">Güncelle</Button>
+                        <Button className="col-span-1 lg:col-span-2" onClick={handleResetPicture} variant="destructive">İptal</Button>
                       </form>
                     </Form>
                     :
@@ -130,7 +126,7 @@ const Profile: React.FC = () => {
               </div>
             </div>
             :
-            <>Veri bulunamadı.</>
+            <p className="text-center">Kullanıcı bulunamadı.</p>
       }
     </>
   )

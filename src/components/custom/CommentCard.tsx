@@ -1,10 +1,41 @@
 import { Link } from "react-router"
 import Divider from "./Divider"
-import { ChevronsDown, ChevronsUp } from "lucide-react"
+import { ChevronsDown, ChevronsUp, Trash } from "lucide-react"
 import CommentType from "@/types/question/CommentType"
 import { timeAgo } from "@/lib/timeAgo"
+import { useAuth } from "@/providers/AuthProvider"
+import { Button } from "../ui/button"
+import useModal from "@/hooks/useModal"
+import useQuestion from "@/hooks/useQuestion"
+import { useToast } from "@/hooks/use-toast"
 
-const CommentCard = ({ data }: { data: CommentType }) => {
+const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMutateFn?: () => void; }) => {
+
+    const { userData } = useAuth()
+    const { showYesNoModal } = useModal()
+    const { toast } = useToast()
+    const { deleteComment, deleteCommentIsLoading } = useQuestion()
+
+    const handleDeleteComment = async () => {
+        try {
+            showYesNoModal("Yorumu silmek istediğinize emin misiniz?", deleteCommentIsLoading, async () => {
+                const res = await deleteComment({ comment_uuid: data.uuid!, user_uuid: userData?.uuid! });
+                if (res?.status === true) {
+                    toast({
+                        title: "Bilgi",
+                        description: res.message,
+                    })
+                    if (commentsMutateFn) commentsMutateFn()
+                }
+            })
+        } catch (error) {
+            toast({
+                title: "Bilgi",
+                description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
+            })
+        }
+    }
+
     return (
         <>
             <div className="w-full flex flex-col gap-3 rounded-md border p-5">
@@ -32,6 +63,13 @@ const CommentCard = ({ data }: { data: CommentType }) => {
                         <ChevronsDown className="text-red-500" />
                         <span className="text-xs font-medium">4</span>
                     </div>
+                    {
+                        userData?.uuid === data.user_uuid && (
+                            <Button variant="destructive" onClick={handleDeleteComment}>
+                                <Trash />
+                            </Button>
+                        )
+                    }
                 </div>
             </div>
         </>

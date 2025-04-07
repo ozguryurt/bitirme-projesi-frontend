@@ -1,17 +1,15 @@
 import { fetcher } from '@/lib/fetcher';
+import { fetcherDelete } from '@/lib/fetcherDelete';
+import { fetcherPutBody } from '@/lib/fetcherPutBody';
+import { fetcherWithFormData } from '@/lib/fetcherWithFormData';
 import CommentType from '@/types/question/CommentType';
-import CreateCommentType from '@/types/question/CreateCommentType';
-import CreateQuestionType from '@/types/question/CreateQuestionType';
-import DeleteQuestionType from '@/types/question/DeleteQuestionType';
 import QuestionTagType from '@/types/question/QuestionTagType';
 import QuestionType from '@/types/question/QuestionType';
-import useSWR, { useSWRConfig } from 'swr';
+import useSWR from 'swr';
+import useSWRMutation from 'swr/mutation';
 
 const useQuestion = () => {
 
-    const { mutate } = useSWRConfig();
-
-    // Tagları çek
     const getTags = (): {
         tags: QuestionTagType[] | [];
         isLoading: boolean;
@@ -31,10 +29,10 @@ const useQuestion = () => {
         isLoading: boolean;
         isError: any;
     } => {
-        const { data, error, isLoading } = useSWR<{ data: QuestionType[] }>(`${import.meta.env.VITE_API}/question`, fetcher);
+        const { data, error, isLoading } = useSWR(`${import.meta.env.VITE_API}/question`, fetcher);
 
         return {
-            questions: data ? data.data : [],
+            questions: data?.data !== undefined ? data.data : null,
             isLoading,
             isError: error,
         };
@@ -63,111 +61,91 @@ const useQuestion = () => {
         commentsIsError: any;
         commentsMutate: () => void;
     } => {
-        const { data, error, isLoading, mutate } = useSWR<{ data: CommentType[] }>(
+        const { data, error, isLoading, mutate } = useSWR(
             `${import.meta.env.VITE_API}/comment/${uuid}/comments`,
             fetcher
         );
 
         return {
-            comments: data ? data.data : null,
+            comments: data?.data !== undefined ? data.data : null,
             commentsIsLoading: isLoading,
             commentsIsError: error,
             commentsMutate: mutate
         };
     };
 
-    const createQuestion = async (questionData: CreateQuestionType) => {
-        try {
-            const formData = new FormData();
-            formData.append('header', questionData.header ?? '');
-            formData.append('content', questionData.content ?? '');
-            formData.append('user_uuid', questionData.user_uuid ?? '');
+    const {
+        trigger: createQuestion,
+        isMutating: createQuestionIsLoading,
+        error: createQuestionIsError
+    } = useSWRMutation(
+        `${import.meta.env.VITE_API}/question/create`,
+        (url, { arg }: { arg: { formData: FormData } }) => fetcherWithFormData(`${url}`, arg.formData)
+    );
 
-            const images = Object.values(questionData.form);
+    const {
+        trigger: editQuestion,
+        isMutating: editQuestionIsLoading,
+        error: editQuestionIsError
+    } = useSWRMutation(
+        `${import.meta.env.VITE_API}/question`,
+        (url, { arg }: { arg: { question_uuid: string; Question: { Header: string; Content: string }; user_uuid: string } }) =>
+            fetcherPutBody(`${url}/${arg.question_uuid}/update`, arg)
+    );
 
-            images.forEach((img: any) => {
-                formData.append("form", img);
-            });
+    const {
+        trigger: deleteQuestion,
+        isMutating: deleteQuestionIsLoading,
+        error: deleteQuestionIsError,
+    } = useSWRMutation(
+        `${import.meta.env.VITE_API}/question`,  // url
+        (url, { arg }: { arg: { question_uuid: string; user_uuid: string } }) => fetcherDelete(`${url}/${arg.question_uuid}/delete`, arg)
+    );
 
-            if (questionData.tags && Array.isArray(questionData.tags)) {
-                const tagsString = questionData.tags.join(',');
-                formData.append('tags', tagsString);
-            }
+    const {
+        trigger: createComment,
+        isMutating: createCommentIsLoading,
+        error: createCommentIsError
+    } = useSWRMutation(
+        `${import.meta.env.VITE_API}/comment`,  // URL
+        (url, { arg }: { arg: { question_uuid: string; formData: FormData } }) => fetcherWithFormData(`${url}/${arg.question_uuid}/add-comment`, arg.formData)
+    );
 
-            const response = await fetch(`${import.meta.env.VITE_API}/question/create`, {
-                method: 'POST',
-                credentials: "include",
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to create question.');
-            }
-
-            const newQuestion = await response.json();
-            return newQuestion;
-        } catch (error) {
-            throw error;
-        }
-    };
-
-    const deleteQuestion = async (questionData: DeleteQuestionType) => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API}/question/${questionData.question_uuid}/delete`, {
-                method: 'DELETE',
-                credentials: "include",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    user_uuid: questionData.user_uuid
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to create question.');
-            }
-
-            const newQuestion = await response.json();
-            mutate(`${import.meta.env.VITE_API}/question`, undefined, { revalidate: true }); // Soru silindiğinde yeni verileri çeksin
-            return newQuestion;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-
-    const createComment = async (commentData: CreateCommentType) => {
-        try {
-            const formData = new FormData();
-            formData.append('comment', commentData.comment ?? '');
-            formData.append('user_uuid', commentData.user_uuid ?? '');
-
-            const response = await fetch(`${import.meta.env.VITE_API}/comment/${commentData.question_uuid}/add-comment`, {
-                method: 'POST',
-                credentials: "include",
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to create question.');
-            }
-
-            const newQuestion = await response.json();
-            return newQuestion;
-        } catch (error) {
-            throw error;
-        }
-    };
+    const {
+        trigger: deleteComment,
+        isMutating: deleteCommentIsLoading,
+        error: deleteCommentIsError
+    } = useSWRMutation(
+        `${import.meta.env.VITE_API}/comment`,  // URL
+        (url, { arg }: { arg: { comment_uuid: string; user_uuid: string } }) => fetcherDelete(`${url}/${arg.comment_uuid}/delete-comment`, { user_uuid: arg.user_uuid })
+    );
 
     return {
         getTags,
         getQuestions,
+
         createQuestion,
+        createQuestionIsLoading,
+        createQuestionIsError,
+
+        editQuestion,
+        editQuestionIsLoading,
+        editQuestionIsError,
+
+        deleteQuestion,
+        deleteQuestionIsLoading,
+        deleteQuestionIsError,
+
         getQuestionByUUID,
         getQuestionCommentsByUUID,
+
         createComment,
-        deleteQuestion
+        createCommentIsLoading,
+        createCommentIsError,
+
+        deleteComment,
+        deleteCommentIsLoading,
+        deleteCommentIsError
     };
 };
 

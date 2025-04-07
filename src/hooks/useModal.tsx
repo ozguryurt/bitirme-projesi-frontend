@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button"
 import useModalStore from "@/stores/modalStore"
+import { Loader2 } from "lucide-react"
 import { ReactNode } from "react"
 
 type ModalType = {
     showModal: (title: string, description: string, body: ReactNode) => void
     closeModal: () => void
-    showYesNoModal: (text: string, yesBtnFn: () => void) => void
+    showYesNoModal: (text: string, disabledStatus: boolean, yesBtnFn: () => Promise<void>) => void
 }
 
 const useModal = (): ModalType => {
@@ -18,16 +19,51 @@ const useModal = (): ModalType => {
         setModalBody(body)
     }
 
-    const showYesNoModal = (text: string, yesBtnFn: () => void) => {
-        setStatus(true)
-        setModalTitle("Bilgi")
-        setModalDescription("")
-        setModalBody(<>
-            <div className="flex flex-col justify-center items-start gap-3">
+    const showYesNoModal = (text: string, disabledStatus: boolean, yesBtnFn: () => Promise<void>) => {
+        setStatus(true);
+        setModalTitle("Bilgi");
+        setModalDescription("");
+
+        const handleYesClick = async () => {
+            setModalBody(
+                <div className="flex flex-col justify-center items-start gap-4">
+                    <p className="text-sm">{text}</p>
+                    <div className="w-full flex justify-end items-center gap-2">
+                        <Button className="text-xs" variant="secondary" onClick={() => closeModal()}>
+                            İptal
+                        </Button>
+                        <Button className="text-xs" disabled>
+                            <Loader2 className="animate-spin" />
+                            Lütfen bekleyin
+                        </Button>
+                    </div>
+                </div>
+            );
+
+            await yesBtnFn(); // Asenkron işlemi bekle
+            closeModal(); // İşlem bitince modalı kapat
+        };
+
+        setModalBody(
+            <div className="flex flex-col justify-center items-start gap-4">
                 <p className="text-sm">{text}</p>
-                <Button className="text-xs p-1" onClick={yesBtnFn}>Onayla</Button>
+                <div className="w-full flex justify-end items-center gap-2">
+                    <Button className="text-xs" variant="secondary" onClick={() => closeModal()}>
+                        İptal
+                    </Button>
+                    <Button className="text-xs" onClick={handleYesClick} disabled={disabledStatus}>
+                        {disabledStatus ? (
+                            <>
+                                <Loader2 className="animate-spin" />
+                                Lütfen bekleyin
+                            </>
+                        ) : (
+                            "Onayla"
+                        )}
+                    </Button>
+                </div>
             </div>
-        </>)
+        );
     }
 
     const closeModal = () => {

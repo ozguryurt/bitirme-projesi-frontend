@@ -31,31 +31,37 @@ const chartConfig = {
 
 const AdminHome = () => {
 
-  const { getUsers, getQuestions } = useAdmin()
+  const { getUsers, getStatistics } = useAdmin()
   const { users, usersIsLoading, usersIsError } = getUsers()
-  const { questions, questionsIsLoading, questionsIsError } = getQuestions()
+  const { statistics, statisticsIsLoading, statisticsIsError } = getStatistics()
 
   return (
     <div className="w-full flex flex-col justify-center items-center gap-12 px-5 lg:px-24 py-5">
       <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-3">
-        <HomeInfoCard
-          title={`Kullanıcılar`}
-          icon={Users}
-          count={users?.length.toString()!}
-          subtitle={`Son 1 ayda %20.1 artış`}
-        />
-        <HomeInfoCard
-          title={`Sorular`}
-          icon={ShieldQuestion}
-          count={questions?.length.toString()!}
-          subtitle={`Son 1 ayda %20.1 artış`}
-        />
-        <HomeInfoCard
-          title={`Cevaplar`}
-          icon={Reply}
-          count={`1.300`}
-          subtitle={`Son 1 ayda %20.1 artış`}
-        />
+        {
+          statisticsIsLoading ? <>Yükleniyor...</> : (
+            <>
+              <HomeInfoCard
+                title={`Kullanıcılar`}
+                icon={Users}
+                count={statistics['Kullanıcı Adedi']}
+                subtitle={`Son 1 ayda %20.1 artış`}
+              />
+              <HomeInfoCard
+                title={`Sorular`}
+                icon={ShieldQuestion}
+                count={statistics['Soru Adedi']}
+                subtitle={`Son 1 ayda %20.1 artış`}
+              />
+              <HomeInfoCard
+                title={`Cevaplar`}
+                icon={Reply}
+                count={statistics['Yorum Adedi']}
+                subtitle={`Son 1 ayda %20.1 artış`}
+              />
+            </>
+          )
+        }
       </div>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="w-full bg-card text-card-foreground">
@@ -80,19 +86,39 @@ const AdminHome = () => {
           <div className="w-full rounded-md p-3 border space-y-5">
             <div className="pb-2">
               <div className="font-semibold leading-none tracking-tight">Son üyeler</div>
-              <div className="text-sm text-muted-foreground">Bu ay yeni 150 üye katıldı.</div>
+              <div className="text-sm text-muted-foreground">Bu ay&nbsp;
+                {
+                  users
+                    ?.filter((user: UserType) => {
+                      const currentDate = new Date();
+                      const currentMonth = currentDate.getMonth();
+
+                      const userCreatedAt = new Date(user.CreatedAt!);
+                      return userCreatedAt.getMonth() === currentMonth;
+                    }).length
+                }
+                &nbsp;yeni üye katıldı.</div>
             </div>
             {
-              users?.slice(0, 5).map((user: UserType, index: number) => {
-                return (
-                  <HomeUserCard
-                    key={index}
-                    imgUrl={`${import.meta.env.VITE_IMAGE_BASEPATH}/${user.avatar}`}
-                    username={user.nickname}
-                    email={user.email}
-                  />
-                )
-              })
+              users
+                ?.filter((user: UserType) => {
+                  const currentDate = new Date();
+                  const currentMonth = currentDate.getMonth();
+
+                  const userCreatedAt = new Date(user.CreatedAt!);
+                  return userCreatedAt.getMonth() === currentMonth;
+                })
+                .slice(0, 5)
+                .map((user: UserType) => {
+                  return (
+                    <HomeUserCard
+                      key={user.uuid}
+                      imgUrl={`${import.meta.env.VITE_IMAGE_BASEPATH}/${user.avatar}`}
+                      username={user.nickname}
+                      email={user.email}
+                    />
+                  );
+                })
             }
           </div>
         </div>

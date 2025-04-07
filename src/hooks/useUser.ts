@@ -55,16 +55,18 @@ const useUser = () => {
         questions: QuestionType[] | null;
         questionsIsLoading: boolean;
         questionsIsError: any;
+        questionsMutate: () => void;
     } => {
-        const { data, error, isLoading } = useSWR<{ data: QuestionType[] }>(
+        const { data, error, isLoading, mutate } = useSWR(
             `${import.meta.env.VITE_API}/question/by/${uuid}`,
             fetcher
         );
 
         return {
-            questions: data ? data.data : null,
+            questions: data?.data !== undefined ? data.data : null,
             questionsIsLoading: isLoading,
             questionsIsError: error,
+            questionsMutate: mutate
         };
     };
 

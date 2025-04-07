@@ -19,8 +19,8 @@ const Modal: React.FC = () => {
                 <Dialog open={status} onOpenChange={setStatus}>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>{modalTitle}</DialogTitle>
-                            <DialogDescription>{modalDescription}</DialogDescription>
+                            <DialogTitle className="text-xl">{modalTitle}</DialogTitle>
+                            <DialogDescription className="text-sm">{modalDescription}</DialogDescription>
                         </DialogHeader>
                         <div>
                             {(modalBody)}

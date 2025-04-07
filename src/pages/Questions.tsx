@@ -16,6 +16,7 @@ import QuestionFilter from "@/modals/QuestionFilter"
 import useFilterStore from "@/stores/filterStore"
 import { useEffect, useState } from "react"
 import useQuestion from "@/hooks/useQuestion"
+import LoadingIcon from "@/components/custom/LoadingIcon"
 
 const Questions = () => {
 
@@ -73,20 +74,15 @@ const Questions = () => {
                     </Button>
                 </div>
                 {
-                    isLoading === true ?
-                        <>Yükleniyor...</>
-                        :
-                        isError !== true ?
-                            questions?.map((question, index) => {
-                                return (
-                                    <QuestionCard
-                                        key={index}
-                                        data={question}
-                                    />
-                                );
-                            })
-                            :
-                            <>Bir hata meydana geldi, daha sonra tekrara deneyin.</>
+                    isError ? <>Bir hata meydana geldi.</> :
+                        isLoading ? <LoadingIcon /> : questions ? questions.map((question, index) => {
+                            return (
+                                <QuestionCard
+                                    key={index}
+                                    data={question}
+                                />
+                            );
+                        }) : <p className="text-center">Soru bulunamadı.</p>
                 }
             </div>
         </>

@@ -15,22 +15,26 @@ import { z } from "zod"
 import questionReplySendSchema from "@/schemas/questionReplySendSchema"
 import { Button } from "@/components/ui/button"
 import CommentCard from "@/components/custom/CommentCard"
-import { SquarePen, Trash } from "lucide-react"
+import { Loader2, SquarePen, Trash } from "lucide-react"
 import useQuestion from "@/hooks/useQuestion"
 import { timeAgo } from "@/lib/timeAgo"
 import useModal from "@/hooks/useModal"
 import { useAuth } from "@/providers/AuthProvider"
 import { marked } from "marked"
 import QuestionImage from "@/components/custom/QuestionImage"
+import { mutate } from "swr"
+import LoadingIcon from "@/components/custom/LoadingIcon"
+import { useToast } from "@/hooks/use-toast"
 
 const Question = () => {
 
     const { userData } = useAuth()
-    const { showModal, showYesNoModal } = useModal()
+    const { showYesNoModal } = useModal()
+    const { toast } = useToast()
     let navigate = useNavigate();
 
     const { questionId } = useParams<string>()
-    const { createComment, getQuestionByUUID, getQuestionCommentsByUUID, deleteQuestion } = useQuestion()
+    const { createComment, createCommentIsLoading, getQuestionByUUID, getQuestionCommentsByUUID, deleteQuestion, deleteQuestionIsLoading } = useQuestion()
     const { question, questionIsLoading, questionIsError } = getQuestionByUUID(questionId!);
     const { comments, commentsIsLoading, commentsIsError, commentsMutate } = getQuestionCommentsByUUID(questionId!);
 
@@ -47,51 +51,73 @@ const Question = () => {
 
     async function onSubmit(values: z.infer<typeof questionReplySendSchema>) {
         try {
-            const res = await createComment({ ...values, question_uuid: questionId!, user_uuid: userData?.uuid! })
+            const formData_ = new FormData();
+            formData_.append('comment', values.comment);
+            formData_.append('user_uuid', userData?.uuid!);
+            const res = await createComment({ question_uuid: questionId!, formData: formData_ });
             if (res?.status === true)
-                showModal("Başarılı", "Başarıyla yorum gönderdiniz.", <></>)
+                toast({
+                    title: "Bilgi",
+                    description: res.message,
+                })
             else
-                showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin.", <></>)
+                toast({
+                    title: "Bilgi",
+                    description: res.message,
+                })
         } catch (error) {
-            showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin.", <></>)
+            toast({
+                title: "Bilgi",
+                description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
+            })
         }
         finally {
             form.reset()
-            await commentsMutate()
+            commentsMutate()
         }
     }
 
     const handleDeleteQuestion = async () => {
         try {
-            showYesNoModal("Soruyu silmek istediğinize emin misiniz?", async () => {
-                const res = await deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! })
+            showYesNoModal("Soruyu silmek istediğinize emin misiniz?", deleteQuestionIsLoading, async () => {
+                const res = await deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! });
                 if (res?.status === true) {
-                    showModal("Başarılı", "Başarıyla soruyu sildiniz.", <></>)
+                    toast({
+                        title: "Bilgi",
+                        description: res.message,
+                    })
+                    mutate(`${import.meta.env.VITE_API}/question`, undefined, { revalidate: true });
                     setTimeout(() => {
                         navigate("/questions")
                     }, 1 * 1000);
                 }
             })
         } catch (error) {
-            showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin.", <></>)
+            toast({
+                title: "Bilgi",
+                description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
+            })
         }
     }
 
     return (
         <>
             {
-                questionIsLoading === true ?
-                    <>Yükleniyor...</>
-                    :
-                    question !== null ?
+                questionIsError ? <>Bir hata meydana geldi.</> :
+                    questionIsLoading ? <LoadingIcon /> : question ?
                         <div className="w-full flex flex-col gap-3 px-5 lg:px-24 py-5">
                             <div className="w-full flex justify-start items-center gap-3">
                                 <p className="w-full font-extrabold text-3xl truncate">
                                     {question?.header}
                                 </p>
-                                <Link to={`/edit-question`}>
-                                    <SquarePen />
-                                </Link>
+                                {
+                                    userData?.uuid === question.User.uuid &&
+                                    <Link to={`/question/${question?.uuid}/edit-question`}>
+                                        <Button variant="secondary">
+                                            <SquarePen />
+                                        </Button>
+                                    </Link>
+                                }
                                 {
                                     userData?.uuid === question.User.uuid &&
                                     <Button variant="destructive" onClick={handleDeleteQuestion}>
@@ -144,7 +170,7 @@ const Question = () => {
                                             <FormItem>
                                                 <FormLabel>
                                                     <p className="w-full font-bold text-2xl">
-                                                        Cevap yaz
+                                                        Yorum yaz
                                                     </p>
                                                 </FormLabel>
                                                 <FormControl>
@@ -158,7 +184,16 @@ const Question = () => {
                                             </FormItem>
                                         )}
                                     />
-                                    <Button type="submit">Gönder</Button>
+                                    <Button type="submit" disabled={createCommentIsLoading}>
+                                        {
+                                            createCommentIsLoading ? (
+                                                <>
+                                                    <Loader2 className="animate-spin" />
+                                                    Lütfen bekleyin
+                                                </>
+                                            ) : "Gönder"
+                                        }
+                                    </Button>
                                 </form>
                             </Form>
                             <Divider />
@@ -167,26 +202,17 @@ const Question = () => {
                             </p>
                             <div className="w-full flex flex-col justify-start items-center gap-3">
                                 {
-                                    commentsIsLoading === true ?
-                                        <>Yükleniyor...</>
-                                        :
-                                        comments !== null ?
-                                            <>
-                                                {
-                                                    comments?.map((comment, index) => {
-                                                        return (
-                                                            <CommentCard key={index} data={comment} />
-                                                        )
-                                                    })
-                                                }
-                                            </>
-                                            :
-                                            <>Henüz bir yorum yapılmamış.</>
+                                    commentsIsError ? <>Bir hata meydana geldi.</> :
+                                        commentsIsLoading ? <LoadingIcon /> : comments ? comments.map((comment, index) => {
+                                            return (
+                                                <CommentCard key={index} data={comment} commentsMutateFn={commentsMutate} />
+                                            )
+                                        }) : <p className="text-center">Henüz bir yorum yapılmamış.</p>
                                 }
                             </div>
                         </div>
                         :
-                        <>Veri bulunamadı.</>
+                        <p className="text-center">Soru bulunamadı.</p>
             }
         </>
     )

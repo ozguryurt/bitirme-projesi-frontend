@@ -3,7 +3,7 @@ import LoadingPage from '@/components/custom/LoadingPage';
 
 // DataTable columns
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -19,11 +19,30 @@ import { useAuth } from '@/providers/AuthProvider';
 import QuestionType from '@/types/question/QuestionType';
 import { formatDate } from '@/lib/formatDate';
 import { Link } from 'react-router';
+import useQuestion from '@/hooks/useQuestion';
+import useModal from '@/hooks/useModal';
+import LoadingIcon from '@/components/custom/LoadingIcon';
 
 const MyQuestions = () => {
     const { userData } = useAuth()
     const { getUserQuestions } = useUser();
-    const { questions, questionsIsLoading, questionsIsError } = getUserQuestions(userData?.uuid!)
+    const { questions, questionsIsLoading, questionsIsError, questionsMutate } = getUserQuestions(userData?.uuid!)
+    const { deleteQuestion, deleteQuestionIsLoading } = useQuestion()
+    const { showModal, showYesNoModal } = useModal()
+
+    const handleDeleteQuestion = async (questionId: string) => {
+        try {
+            showYesNoModal("Soruyu silmek istediğinize emin misiniz?", deleteQuestionIsLoading, async () => {
+                const res = await deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! });
+                if (res?.status === true) {
+                    showModal("Başarılı", res.message, <></>)
+                    await questionsMutate()
+                }
+            })
+        } catch (error) {
+            showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin.", <></>)
+        }
+    }
 
     const columns: ColumnDef<QuestionType>[] = [
         {
@@ -61,6 +80,11 @@ const MyQuestions = () => {
                             <DropdownMenuItem>
                                 <Link to={`/question/${question.uuid}`}>Soruya git</Link>
                             </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Button variant={'destructive'} onClick={() => handleDeleteQuestion(question.uuid)}>
+                                    <Trash /> Soruyu sil
+                                </Button>
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 );
@@ -68,13 +92,12 @@ const MyQuestions = () => {
         },
     ];
 
-    if (questionsIsError) return <ErrorPage />;
-
-    if (questionsIsLoading) return <LoadingPage />;
-
     return (
         <div className="w-full min-h-screen flex flex-col justify-center items-center gap-3 px-5 lg:px-24 py-5">
-            <DataTable columns={columns} data={questions!} itemPerPage={5} />
+            {
+                questionsIsError ? <>Bir hata meydana geldi.</> :
+                    questionsIsLoading ? <LoadingIcon /> : questions ? <DataTable columns={columns} data={questions!} itemPerPage={5} /> : <>Soru bulunamadı.</>
+            }
         </div>
     );
 };

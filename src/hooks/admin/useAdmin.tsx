@@ -5,6 +5,20 @@ import useSWR from 'swr';
 
 export const useAdmin = () => {
 
+    const getStatistics = (): {
+        statistics: UserType[] | [];
+        statisticsIsLoading: boolean;
+        statisticsIsError: any;
+    } => {
+        const { data, error, isLoading } = useSWR<any>(`${import.meta.env.VITE_API}/admin/get-statics`, fetcher)
+
+        return {
+            statistics: data ? data.data : null,
+            statisticsIsLoading: isLoading,
+            statisticsIsError: error,
+        };
+    };
+
     const getUsers = (): {
         users: UserType[] | [];
         usersIsLoading: boolean;
@@ -35,6 +49,7 @@ export const useAdmin = () => {
 
     return {
         getUsers,
-        getQuestions
+        getQuestions,
+        getStatistics
     };
 };

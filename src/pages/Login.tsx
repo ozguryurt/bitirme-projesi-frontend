@@ -17,10 +17,13 @@ import { z } from "zod"
 import loginSchema from '@/schemas/loginSchema'
 import { useAuth } from "@/providers/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
+import useAuthStore from "@/stores/authStore"
+import { Loader2 } from "lucide-react"
 
 const Login = () => {
 
-    const { loginWithEmail } = useAuth()
+    const { loginWithEmail, loginIsLoading } = useAuth()
+    const { setUser } = useAuthStore();
     const { toast } = useToast()
 
     const form = useForm<z.infer<typeof loginSchema>>({
@@ -33,17 +36,23 @@ const Login = () => {
 
     async function onSubmit(values: z.infer<typeof loginSchema>) {
         try {
-            const res = await loginWithEmail(values.email, values.password)
-            if (res.status === true)
+            const res = await loginWithEmail({
+                "email": values.email,
+                "password": values.password
+            })
+            if (res.status === true) {
                 toast({
                     title: "Bilgi",
-                    description: `Başarıyla giriş yaptınız.`,
+                    description: res.message,
                 })
-            else
+                setUser(res.data.user);
+            }
+            else {
                 toast({
                     title: "Bilgi",
-                    description: `Hatalı kullanıcı adı veya şifre.`,
+                    description: res.message,
                 })
+            }
         } catch (error) {
             toast({
                 title: "Bilgi",
@@ -77,7 +86,7 @@ const Login = () => {
                                 <FormItem>
                                     <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Şifre</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="•••••" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
+                                        <Input placeholder="•••••" type="password" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
                                     </FormControl>
                                     <FormDescription>
                                         <Link to="/forgot-password" className="font-medium text-xs text-blue-500">Şifremi unuttum</Link>
@@ -86,7 +95,16 @@ const Login = () => {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" className="font-medium text-base text-white dark:text-zinc-800">Giriş yap</Button>
+                        <Button type="submit" className="font-medium text-base text-white dark:text-zinc-800" disabled={loginIsLoading}>
+                            {
+                                loginIsLoading ? (
+                                    <>
+                                        <Loader2 className="animate-spin" />
+                                        Lütfen bekleyin
+                                    </>
+                                ) : "Giriş yap"
+                            }
+                        </Button>
                     </form>
                 </Form>
                 <p className="font-medium text-sm text-zinc-800 dark:text-white">Bir hesabın yok mu? <Link to="/register" className="text-blue-500">Buraya</Link> tıklayarak bir tane oluştur!</p>

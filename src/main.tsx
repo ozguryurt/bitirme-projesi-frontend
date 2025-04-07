@@ -41,7 +41,8 @@ const PrivateRoute = ({ element }: { element: JSX.Element }) => {
 // Admin rota: Admin girişi yapılmadıysa admin login sayfasına yönlendir
 const AdminRoute = ({ element }: { element: JSX.Element }) => {
   const { user } = useAuthStore();
-  return (user !== null && user.role === "admin") ? element : <Navigate to="/" />;
+  return (user !== null) ? element : <Navigate to="/" />;
+  //return (user !== null && user.role === "admin") ? element : <Navigate to="/" />;
 };
 
 createRoot(document.getElementById('root')!).render(
@@ -54,7 +55,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/myquestions" element={<PrivateRoute element={<MyQuestions />} />} />
           <Route path="/questions" element={<Questions />} />
           <Route path="/new-question" element={<PrivateRoute element={<NewQuestion />} />} />
-          <Route path="/edit-question" element={<PrivateRoute element={<EditQuestion />} />} />
+          <Route path="/question/:questionId/edit-question" element={<PrivateRoute element={<EditQuestion />} />} />
           <Route path="/question/:questionId" element={<Question />} />
           <Route path="/login" element={<UnprivateRoute element={<Login />} />} />
           <Route path="/register" element={<UnprivateRoute element={<Register />} />} />

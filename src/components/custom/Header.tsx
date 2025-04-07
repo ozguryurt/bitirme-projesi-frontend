@@ -1,6 +1,7 @@
 import {
     ChevronsLeft,
     CircleHelp,
+    Loader2,
     LogOut,
     Megaphone,
     Settings,
@@ -28,10 +29,12 @@ import { useState } from "react"
 import NotificationCard from "./NotificationCard"
 import { useAuth } from "@/providers/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
+import useAuthStore from "@/stores/authStore"
 
 const Header = () => {
 
-    const { userData, logout } = useAuth()
+    const { userData, logout, logoutIsLoading } = useAuth()
+    const { setUser } = useAuthStore();
     const { toast } = useToast()
     const [tab, setTab] = useState<number>(0)
     const [open, setOpen] = useState<boolean>(false)
@@ -39,16 +42,19 @@ const Header = () => {
     const handleLogout = async () => {
         try {
             const res = await logout()
-            if (res.status === true)
+            if (res.status === true) {
                 toast({
                     title: "Bilgi",
-                    description: `Başarıyla çıkış yaptınız.`,
+                    description: res.message,
                 })
-            else
+                setUser(null)
+            }
+            else {
                 toast({
                     title: "Bilgi",
-                    description: `Bir hata meydana geldi, daha sonra tekrar deneyin.`,
+                    description: res.message,
                 })
+            }
         } catch (error) {
             toast({
                 title: "Bilgi",
@@ -143,7 +149,16 @@ const Header = () => {
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={handleLogout}>
                                                 <LogOut />
-                                                <span>Çıkış yap</span>
+                                                <span>
+                                                    {
+                                                        logoutIsLoading ? (
+                                                            <div className="flex gap-2">
+                                                                <Loader2 className="animate-spin" />
+                                                                <span>Lütfen bekleyin</span>
+                                                            </div>
+                                                        ) : "Çıkış yap"
+                                                    }
+                                                </span>
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     }

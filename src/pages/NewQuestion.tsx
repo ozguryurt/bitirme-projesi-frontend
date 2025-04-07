@@ -16,16 +16,17 @@ import newQuestionFormSchema from "@/schemas/newQuestionFormSchema";
 import MarkdownEditor from "@/components/custom/MarkdownEditor";
 import useQuestion from "@/hooks/useQuestion";
 import { useAuth } from "@/providers/AuthProvider";
-import useModal from "@/hooks/useModal";
 import { useRef, useState } from "react";
 import QuestionImage from "@/components/custom/QuestionImage";
+import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const NewQuestion = () => {
 
     const { userData } = useAuth()
-    const { showModal } = useModal()
+    const { toast } = useToast()
 
-    const { getTags, createQuestion } = useQuestion()
+    const { getTags, createQuestion, createQuestionIsLoading } = useQuestion()
     const { tags, isLoading } = getTags();
     const frameworksList = tags?.map(tag => ({ value: tag.uuid, label: tag.name }));
 
@@ -53,19 +54,34 @@ const NewQuestion = () => {
 
     const onSubmit = async (values: z.infer<typeof newQuestionFormSchema>) => {
         try {
-            const formData = {
-                ...values,
-                user_uuid: userData?.uuid!,
-                form: images,
-            };
-            console.log(formData);
-            const res = await createQuestion(formData);
+            const formData_ = new FormData();
+            formData_.append('header', values.header);
+            formData_.append('content', values.content);
+            formData_.append('user_uuid', userData?.uuid!);
+            const images_ = Object.values(images);
+            images_.forEach((img: any) => {
+                formData_.append("form", img);
+            });
+            if (values.tags && Array.isArray(values.tags)) {
+                const tagsString = values.tags.join(',');
+                formData_.append('tags', tagsString);
+            }
+            const res = await createQuestion({ formData: formData_ });
             if (res?.status === true)
-                showModal("Başarılı", "Başarıyla soru oluşturdunuz.", <></>);
+                toast({
+                    title: "Bilgi",
+                    description: res.message,
+                })
             else
-                showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin.", <></>);
+                toast({
+                    title: "Bilgi",
+                    description: res.message,
+                })
         } catch (error) {
-            showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin." + error, <></>);
+            toast({
+                title: "Bilgi",
+                description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
+            })
         } finally {
             newQuestionForm.reset();
             setImages([])
@@ -161,7 +177,16 @@ const NewQuestion = () => {
                             />
                     }
 
-                    <Button type="submit">Oluştur</Button>
+                    <Button type="submit" disabled={createQuestionIsLoading}>
+                        {
+                            createQuestionIsLoading ? (
+                                <>
+                                    <Loader2 className="animate-spin" />
+                                    Lütfen bekleyin
+                                </>
+                            ) : "Oluştur"
+                        }
+                    </Button>
                 </form>
             </Form>
         </div>

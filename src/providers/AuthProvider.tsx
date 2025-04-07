@@ -1,13 +1,19 @@
 import LoadingPage from '@/components/custom/LoadingPage';
 import ThemeSelector from '@/components/custom/ThemeSelector';
+import { fetcherWithBody } from '@/lib/fetcherWithBody';
 import useAuthStore from '@/stores/authStore';
 import UserType from '@/types/UserType';
 import { createContext, useContext, useEffect, ReactNode, useState } from 'react';
+import useSWRMutation from 'swr/mutation';
 
 interface AuthContextType {
-    loginWithEmail: (username: string, password: string) => Promise<any>;
+    loginWithEmail: ({ email, password }: { email: string, password: string }) => Promise<any>;
+    loginIsLoading: boolean;
+    loginIsError: boolean;
     register: (username: string, password: string, passAgain: string, email: string, phone: string) => Promise<any>;
     logout: () => Promise<any>;
+    logoutIsLoading: boolean;
+    logoutIsError: boolean;
     check: () => Promise<void>;
     userData: UserType | null;
 }
@@ -30,6 +36,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const { user, setUser } = useAuthStore();
     const [isLoading, setIsLoading] = useState<boolean>(true)
 
+    const { trigger: loginWithEmail, isMutating: loginIsLoading, error: loginIsError } = useSWRMutation(
+        `${import.meta.env.VITE_API}/auth/login-with-email`,
+        fetcherWithBody
+    );
+
+    const { trigger: logout, isMutating: logoutIsLoading, error: logoutIsError } = useSWRMutation(
+        `${import.meta.env.VITE_API}/auth/logout`,
+        fetcherWithBody
+    );
+
+    /*
     const loginWithEmail = async (email: string, password: string): Promise<any> => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API}/auth/login-with-email`, {
@@ -51,6 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             return false;
         }
     };
+    */
 
     const register = async (username: string, password: string, passAgain: string, email: string, phone: string): Promise<any> => {
         if (password !== passAgain) {
@@ -76,7 +94,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             return false;
         }
     };
-
+    /*
     const logout = async () => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API}/auth/logout`, {
@@ -97,7 +115,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             return false;
         }
     };
-
+    */
     const check = async (): Promise<void> => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API}/auth/autologin`, {
@@ -125,9 +143,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Context değerleri
     const value = {
         loginWithEmail,
+        loginIsLoading,
+        loginIsError,
+
+        logout,
+        logoutIsLoading,
+        logoutIsError,
+
         register,
         check,
-        logout,
         userData: user
     };
 
