@@ -1,6 +1,3 @@
-import ErrorPage from '@/components/custom/ErrorPage';
-import LoadingPage from '@/components/custom/LoadingPage';
-
 // DataTable columns
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Trash } from "lucide-react";

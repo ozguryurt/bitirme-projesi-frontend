@@ -8,6 +8,7 @@ import HomeInfoCard from "@/components/custom/admin/HomeInfoCard"
 import HomeUserCard from "@/components/custom/admin/HomeUserCard"
 import { useAdmin } from "@/hooks/admin/useAdmin"
 import UserType from "@/types/UserType"
+import LoadingIcon from "@/components/custom/LoadingIcon"
 
 const chartData = [
   { ay: "Ocak", sorular: 186, cevaplar: 80 },
@@ -39,28 +40,29 @@ const AdminHome = () => {
     <div className="w-full flex flex-col justify-center items-center gap-12 px-5 lg:px-24 py-5">
       <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-3">
         {
-          statisticsIsLoading ? <>Yükleniyor...</> : (
-            <>
-              <HomeInfoCard
-                title={`Kullanıcılar`}
-                icon={Users}
-                count={statistics['Kullanıcı Adedi']}
-                subtitle={`Son 1 ayda %20.1 artış`}
-              />
-              <HomeInfoCard
-                title={`Sorular`}
-                icon={ShieldQuestion}
-                count={statistics['Soru Adedi']}
-                subtitle={`Son 1 ayda %20.1 artış`}
-              />
-              <HomeInfoCard
-                title={`Cevaplar`}
-                icon={Reply}
-                count={statistics['Yorum Adedi']}
-                subtitle={`Son 1 ayda %20.1 artış`}
-              />
-            </>
-          )
+          statisticsIsError ? <>Bir hata meydana geldi.</> :
+            statisticsIsLoading ? <LoadingIcon /> : (
+              <>
+                <HomeInfoCard
+                  title={`Kullanıcılar`}
+                  icon={Users}
+                  count={statistics['Kullanıcı Adedi']}
+                  subtitle={`Son 1 ayda %20.1 artış`}
+                />
+                <HomeInfoCard
+                  title={`Sorular`}
+                  icon={ShieldQuestion}
+                  count={statistics['Soru Adedi']}
+                  subtitle={`Son 1 ayda %20.1 artış`}
+                />
+                <HomeInfoCard
+                  title={`Cevaplar`}
+                  icon={Reply}
+                  count={statistics['Yorum Adedi']}
+                  subtitle={`Son 1 ayda %20.1 artış`}
+                />
+              </>
+            )
         }
       </div>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -100,25 +102,26 @@ const AdminHome = () => {
                 &nbsp;yeni üye katıldı.</div>
             </div>
             {
-              users
-                ?.filter((user: UserType) => {
-                  const currentDate = new Date();
-                  const currentMonth = currentDate.getMonth();
+              usersIsError ? <>Bir hata meydana geldi.</> :
+                usersIsLoading ? <LoadingIcon /> : users ? users
+                  ?.filter((user: UserType) => {
+                    const currentDate = new Date();
+                    const currentMonth = currentDate.getMonth();
 
-                  const userCreatedAt = new Date(user.CreatedAt!);
-                  return userCreatedAt.getMonth() === currentMonth;
-                })
-                .slice(0, 5)
-                .map((user: UserType) => {
-                  return (
-                    <HomeUserCard
-                      key={user.uuid}
-                      imgUrl={`${import.meta.env.VITE_IMAGE_BASEPATH}/${user.avatar}`}
-                      username={user.nickname}
-                      email={user.email}
-                    />
-                  );
-                })
+                    const userCreatedAt = new Date(user.CreatedAt!);
+                    return userCreatedAt.getMonth() === currentMonth;
+                  })
+                  .slice(0, 5)
+                  .map((user: UserType) => {
+                    return (
+                      <HomeUserCard
+                        key={user.uuid}
+                        imgUrl={`${import.meta.env.VITE_IMAGE_BASEPATH}/${user.avatar}`}
+                        username={user.nickname}
+                        email={user.email}
+                      />
+                    );
+                  }) : <p className="text-center">Kullanıcı bulunamadı.</p>
             }
           </div>
         </div>

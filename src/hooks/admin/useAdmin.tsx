@@ -6,7 +6,7 @@ import useSWR from 'swr';
 export const useAdmin = () => {
 
     const getStatistics = (): {
-        statistics: UserType[] | [];
+        statistics: any;
         statisticsIsLoading: boolean;
         statisticsIsError: any;
     } => {

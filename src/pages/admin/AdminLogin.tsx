@@ -18,7 +18,7 @@ const AdminLogin = () => {
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            username: "",
+            email: "",
             password: ""
         },
     })
@@ -32,7 +32,7 @@ const AdminLogin = () => {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-9/12">
                         <FormField
                             control={form.control}
-                            name="username"
+                            name="email"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Kullanıcı adı</FormLabel>
