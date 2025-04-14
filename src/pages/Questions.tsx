@@ -73,17 +73,19 @@ const Questions = () => {
                         <Link to={`/new-question`}><Plus /> Yeni soru</Link>
                     </Button>
                 </div>
-                {
-                    isError ? <>Bir hata meydana geldi.</> :
-                        isLoading ? <LoadingIcon /> : questions ? questions.map((question, index) => {
-                            return (
-                                <QuestionCard
-                                    key={index}
-                                    data={question}
-                                />
-                            );
-                        }) : <p className="text-center">Soru bulunamadı.</p>
-                }
+                <div className="flex col-span-1 lg:col-span-2 justify-center items-center gap-2">
+                    {
+                        isError ? <>Bir hata meydana geldi.</> :
+                            isLoading ? <LoadingIcon /> : questions ? questions.map((question, index) => {
+                                return (
+                                    <QuestionCard
+                                        key={index}
+                                        data={question}
+                                    />
+                                );
+                            }) : <p className="text-center">Soru bulunamadı.</p>
+                    }
+                </div>
             </div>
         </>
     )

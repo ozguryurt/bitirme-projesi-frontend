@@ -30,6 +30,7 @@ import NotificationCard from "./NotificationCard"
 import { useAuth } from "@/providers/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
 import useAuthStore from "@/stores/authStore"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const Header = () => {
 
@@ -108,7 +109,10 @@ const Header = () => {
                             <NavigationMenuItem>
                                 <DropdownMenu open={open} onOpenChange={setOpen}>
                                     <DropdownMenuTrigger asChild>
-                                        <img src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${userData?.avatar}`} alt="User profile picture" className="w-12 h-12 rounded-full cursor-pointer" />
+                                        <Avatar className="w-12 h-12 rounded-full cursor-pointer">
+                                            <AvatarImage src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${userData.avatar}`} />
+                                            <AvatarFallback>{userData?.nickname}</AvatarFallback>
+                                        </Avatar>
                                     </DropdownMenuTrigger>
                                     {
                                         tab === 0 &&

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
-import { SquarePen } from "lucide-react"
+import { Loader2, SquarePen } from "lucide-react"
 import React, { useState } from "react"
 import { useParams } from "react-router"
 import { useAuth } from "@/providers/AuthProvider"
@@ -25,7 +25,7 @@ const Profile: React.FC = () => {
 
   const { userData, check } = useAuth()
   const { userId } = useParams()
-  const { uploadAvatar, getUserByUUID } = useUser()
+  const { uploadAvatar, uploadAvatarIsLoading, getUserByUUID } = useUser()
   const { user, userIsLoading, userIsError } = getUserByUUID(userId!);
   const { toast } = useToast()
 
@@ -42,7 +42,13 @@ const Profile: React.FC = () => {
 
   async function onSubmit(data: z.infer<typeof avatarSchema>) {
     try {
-      const res = await uploadAvatar({ avatar: data.avatar, uuid: userData?.uuid! })
+      const formData_ = new FormData();
+      formData_.append('uuid', userData?.uuid!);
+      const images = Object.values(data.avatar);
+      images.forEach((img: any) => {
+        formData_.append("avatar", img);
+      });
+      const res = await uploadAvatar({ formData: formData_ })
       if (res.status === true)
         toast({
           title: "Bilgi",
@@ -101,7 +107,16 @@ const Profile: React.FC = () => {
                             );
                           }}
                         />
-                        <Button className="col-span-1 lg:col-span-2" type="submit">Güncelle</Button>
+                        <Button className="col-span-1 lg:col-span-2" type="submit" disabled={uploadAvatarIsLoading}>
+                          {
+                            uploadAvatarIsLoading ? (
+                              <>
+                                <Loader2 className="animate-spin" />
+                                Lütfen bekleyin
+                              </>
+                            ) : "Güncelle"
+                          }
+                        </Button>
                         <Button className="col-span-1 lg:col-span-2" onClick={handleResetPicture} variant="destructive">İptal</Button>
                       </form>
                     </Form>

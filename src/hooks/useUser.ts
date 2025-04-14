@@ -1,11 +1,13 @@
 import { fetcher } from "@/lib/fetcher";
+import { fetcherWithPutFormData } from "@/lib/fetcherWithPutFormData";
 import QuestionType from "@/types/question/QuestionType";
-import UploadAvatarType from "@/types/user/UploadAvatarType";
 import UserType from "@/types/UserType";
 import useSWR from "swr";
+import useSWRMutation from 'swr/mutation';
 
 const useUser = () => {
 
+    /*
     const uploadAvatar = async (avatarData: UploadAvatarType) => {
         try {
             const formData = new FormData();
@@ -33,6 +35,16 @@ const useUser = () => {
             throw error;
         }
     };
+    */
+
+    const {
+        trigger: uploadAvatar,
+        isMutating: uploadAvatarIsLoading,
+        error: uploadAvatarIsError
+    } = useSWRMutation(
+        `${import.meta.env.VITE_API}/user/load-avatar`,
+        (url, { arg }: { arg: { formData: FormData } }) => fetcherWithPutFormData(`${url}`, arg.formData)
+    );
 
     const getUserByUUID = (uuid: string): {
         user: UserType | null;
@@ -72,6 +84,8 @@ const useUser = () => {
 
     return {
         uploadAvatar,
+        uploadAvatarIsLoading,
+        uploadAvatarIsError,
         getUserByUUID,
         getUserQuestions
     };
