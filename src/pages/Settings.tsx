@@ -36,7 +36,7 @@ const Settings = () => {
     })
 
     function onSubmit(data: z.infer<typeof settingsSchema>) {
-        //console.log(data)
+        console.log(data)
     }
 
     return (

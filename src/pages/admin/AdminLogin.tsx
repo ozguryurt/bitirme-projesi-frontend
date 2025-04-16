@@ -23,7 +23,7 @@ const AdminLogin = () => {
         },
     })
     function onSubmit(values: z.infer<typeof loginSchema>) {
-        //console.log(values)
+        console.log(values)
     }
     return (
         <>
