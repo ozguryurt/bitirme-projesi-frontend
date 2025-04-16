@@ -113,7 +113,6 @@ const ForgotPassword = () => {
     }
 
     async function passwordOnSubmit(data: z.infer<typeof forgotPasswordSchema>) {
-        console.log("buraya tıklandı")
         try {
             const res = await forgotPasswordChangePassword({
                 "Email": emailForm.getValues("email"),

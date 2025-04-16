@@ -30,7 +30,6 @@ const EditQuestion = () => {
 
     const { getQuestionByUUID } = useQuestion()
     const { question, questionIsLoading, questionIsError } = getQuestionByUUID(questionId!);
-    console.log(question?.Tags)
 
     const { getTags, editQuestion, editQuestionIsLoading } = useQuestion()
     const { tags, isLoading } = getTags();
@@ -51,8 +50,9 @@ const EditQuestion = () => {
                 const tagsString = values.tags.join(',');
                 formData_.append('tags', tagsString);
             }*/
+            console.log(questionId, values.header, values.content, userData?.uuid!)
             const res = await editQuestion({
-                question_uuid: question?.uuid!,
+                question_uuid: questionId!,
                 Question: {
                     Header: values.header,
                     Content: values.content

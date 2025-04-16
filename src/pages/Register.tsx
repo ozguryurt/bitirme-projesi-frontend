@@ -45,7 +45,6 @@ const Register = () => {
                 "email": values.email,
                 "tel": values.tel,
             })
-            console.log(res)
             if (res.status === true) {
                 toast({
                     title: "Bilgi",
