@@ -8,6 +8,7 @@ import { Button } from "../ui/button"
 import useModal from "@/hooks/useModal"
 import useQuestion from "@/hooks/useQuestion"
 import { useToast } from "@/hooks/use-toast"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMutateFn?: () => void; }) => {
 
@@ -40,7 +41,10 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
         <>
             <div className="w-full flex flex-col gap-3 rounded-md border p-5">
                 <Link to={`/profile/${data.user.uuid}`} className="flex justify-start items-center gap-2">
-                    <img src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${data.user.avatar}`} alt="User profile picture" className="w-14 h-14 rounded-full" />
+                    <Avatar className="w-14 h-14 rounded-full cursor-pointer">
+                        <AvatarImage src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${data.user.avatar}`} />
+                        <AvatarFallback>{userData?.nickname}</AvatarFallback>
+                    </Avatar>
                     <div className="w-full flex flex-col justify-center items-start">
                         <p className="w-full truncate font-medium">
                             {data.user.nickname}
@@ -50,8 +54,8 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
                         </p>
                     </div>
                 </Link>
-                <div className="reply-content">
-                    {data.comment}
+                <div className="reply-content break-words whitespace-pre-wrap">
+                    <span>{data.comment}</span>
                 </div>
                 <Divider />
                 <div className="w-full flex justify-start items-center gap-3">

@@ -73,7 +73,7 @@ const Questions = () => {
                         <Link to={`/new-question`}><Plus /> Yeni soru</Link>
                     </Button>
                 </div>
-                <div className="flex col-span-1 lg:col-span-2 justify-center items-center gap-2">
+                <div className="grid grid-cols-1 lg:grid-cols-2 col-span-1 lg:col-span-2 gap-2">
                     {
                         isError ? <>Bir hata meydana geldi.</> :
                             isLoading ? <LoadingIcon /> : questions ? questions.map((question, index) => {

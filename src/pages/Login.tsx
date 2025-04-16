@@ -63,9 +63,9 @@ const Login = () => {
 
     return (
         <>
-            <div className="min-h-screen flex flex-col justify-center items-center gap-3 px-5 lg:px-24 py-5">
+            <div className="min-h-screen flex flex-col justify-center items-center px-5 lg:px-24 py-5 gap-5">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-9/12">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full lg:w-9/12">
                         <FormField
                             control={form.control}
                             name="email"
@@ -105,9 +105,9 @@ const Login = () => {
                                 ) : "Giriş yap"
                             }
                         </Button>
+                        <p className="font-medium text-sm text-zinc-800 dark:text-white">Bir hesabın yok mu? <Link to="/register" className="text-blue-500">Buraya</Link> tıklayarak bir tane oluştur!</p>
                     </form>
                 </Form>
-                <p className="font-medium text-sm text-zinc-800 dark:text-white">Bir hesabın yok mu? <Link to="/register" className="text-blue-500">Buraya</Link> tıklayarak bir tane oluştur!</p>
             </div>
         </>
     )

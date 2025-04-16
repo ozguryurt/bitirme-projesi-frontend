@@ -1,4 +1,5 @@
 import {
+    AlignJustify,
     ChevronsLeft,
     CircleHelp,
     Loader2,
@@ -31,6 +32,12 @@ import { useAuth } from "@/providers/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
 import useAuthStore from "@/stores/authStore"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+    Sheet,
+    SheetContent,
+    SheetTrigger,
+    SheetClose
+} from "@/components/ui/sheet"
 
 const Header = () => {
 
@@ -67,8 +74,8 @@ const Header = () => {
     return (
         <>
             <NavigationMenu>
-                <NavigationMenuList className="w-full flex-wrap lg:flex justify-between items-center px-24 py-5 shadow gap-5">
-                    <div className="flex justify-start items-center gap-5">
+                <NavigationMenuList className="w-full lg:flex justify-between items-center lg:px-24 px-5 py-5">
+                    <div className="flex justify-start items-center gap-3">
                         <NavigationMenuItem>
                             <NavigationMenuLink asChild>
                                 <Link to="/" className={navigationMenuTriggerStyle()}>
@@ -84,18 +91,37 @@ const Header = () => {
                             </NavigationMenuLink>
                         </NavigationMenuItem>
                     </div>
-                    <div className="flex justify-end items-center gap-5">
+                    <div className="flex justify-end items-center gap-3">
                         {
                             !userData &&
                             <>
-                                <NavigationMenuItem>
+                                <Sheet>
+                                    <SheetTrigger className="lg:hidden block" asChild>
+                                        <AlignJustify />
+                                    </SheetTrigger>
+                                    <SheetContent>
+                                        <div className="grid gap-2 py-4">
+                                            <SheetClose asChild>
+                                                <Link to="/register" className={navigationMenuTriggerStyle()}>
+                                                    Kayıt ol
+                                                </Link>
+                                            </SheetClose>
+                                            <SheetClose asChild>
+                                                <Link to="/login" className={navigationMenuTriggerStyle()}>
+                                                    Giriş yap
+                                                </Link>
+                                            </SheetClose>
+                                        </div>
+                                    </SheetContent>
+                                </Sheet>
+                                <NavigationMenuItem className="lg:block hidden">
                                     <NavigationMenuLink asChild>
                                         <Link to="/register" className={navigationMenuTriggerStyle()}>
                                             Kayıt ol
                                         </Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
-                                <NavigationMenuItem>
+                                <NavigationMenuItem className="lg:block hidden">
                                     <NavigationMenuLink asChild>
                                         <Link to="/login" className={navigationMenuTriggerStyle()}>
                                             Giriş yap

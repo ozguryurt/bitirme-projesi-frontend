@@ -6,7 +6,7 @@ import { timeAgo } from "@/lib/timeAgo";
 const QuestionCard = ({ data }: { data: QuestionType }) => {
     return (
         <>
-            <div className="w-full flex flex-col justify-center items-start border rounded-md p-2 gap-3 hover:bg-slate-50 dark:hover:bg-zinc-900 transition-all">
+            <div className="flex flex-col justify-center items-start border rounded-md p-2 gap-3 hover:bg-slate-50 dark:hover:bg-zinc-900 transition-all">
                 <div className="w-full grid grid-cols-2">
                     <Link to={`/profile/${data.User?.uuid}`} className="w-full flex justify-start items-center gap-2">
                         <img src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${data.User?.avatar}`} alt="User profile picture" className="w-8 h-8 rounded-full" />

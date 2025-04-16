@@ -10,7 +10,9 @@ interface AuthContextType {
     loginWithEmail: ({ email, password }: { email: string, password: string }) => Promise<any>;
     loginIsLoading: boolean;
     loginIsError: boolean;
-    register: (username: string, password: string, passAgain: string, email: string, phone: string) => Promise<any>;
+    register: ({ nickname, password, passAgain, email, tel }: { nickname: string, password: string, passAgain: string, email: string, tel: string }) => Promise<any>;
+    registerIsLoading: boolean;
+    registerIsError: boolean;
     logout: () => Promise<any>;
     logoutIsLoading: boolean;
     logoutIsError: boolean;
@@ -70,7 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
     */
 
-    const register = async (username: string, password: string, passAgain: string, email: string, phone: string): Promise<any> => {
+    /*const register = async (username: string, password: string, passAgain: string, email: string, phone: string): Promise<any> => {
         if (password !== passAgain) {
             return false;
         }
@@ -93,7 +95,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             console.error('Register error:', error);
             return false;
         }
-    };
+    };*/
+
+    const { trigger: register, isMutating: registerIsLoading, error: registerIsError } = useSWRMutation(
+        `${import.meta.env.VITE_API}/auth/signup`,
+        fetcherWithBody
+    );
+
     /*
     const logout = async () => {
         try {
@@ -151,6 +159,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         logoutIsError,
 
         register,
+        registerIsLoading,
+        registerIsError,
+
         check,
         userData: user
     };

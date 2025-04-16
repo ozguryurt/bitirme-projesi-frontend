@@ -145,7 +145,7 @@ const NewQuestion = () => {
                         </FormControl>
                         <FormMessage className="font-medium text-xs" />
                     </FormItem>
-                    <div className="grid grid-cols-8 gap-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
                         {images.map((image, index) => (
                             <QuestionImage key={index} path={URL.createObjectURL(image)} onClickFn={() => handleRemoveImage(index)} />
                         ))}
