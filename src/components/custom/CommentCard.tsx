@@ -43,7 +43,7 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
                 <Link to={`/profile/${data.user.uuid}`} className="flex justify-start items-center gap-2">
                     <Avatar className="w-14 h-14 rounded-full cursor-pointer">
                         <AvatarImage src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${data.user.avatar}`} />
-                        <AvatarFallback>{userData?.nickname}</AvatarFallback>
+                        <AvatarFallback>{data.user.nickname}</AvatarFallback>
                     </Avatar>
                     <div className="w-full flex flex-col justify-center items-start">
                         <p className="w-full truncate font-medium">

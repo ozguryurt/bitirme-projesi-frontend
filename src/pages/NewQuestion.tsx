@@ -20,11 +20,13 @@ import { useRef, useState } from "react";
 import QuestionImage from "@/components/custom/QuestionImage";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router";
 
 const NewQuestion = () => {
 
     const { userData } = useAuth()
     const { toast } = useToast()
+    let navigate = useNavigate()
 
     const { getTags, createQuestion, createQuestionIsLoading } = useQuestion()
     const { tags, isLoading } = getTags();
@@ -67,16 +69,19 @@ const NewQuestion = () => {
                 formData_.append('tags', tagsString);
             }
             const res = await createQuestion({ formData: formData_ });
-            if (res?.status === true)
+            if (res?.status === true) {
                 toast({
                     title: "Bilgi",
                     description: res.message,
                 })
-            else
+                navigate("/questions")
+            }
+            else {
                 toast({
                     title: "Bilgi",
                     description: res.message,
                 })
+            }
         } catch (error) {
             toast({
                 title: "Bilgi",

@@ -25,6 +25,7 @@ import QuestionImage from "@/components/custom/QuestionImage"
 import { mutate } from "swr"
 import LoadingIcon from "@/components/custom/LoadingIcon"
 import { useToast } from "@/hooks/use-toast"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const Question = () => {
 
@@ -34,7 +35,7 @@ const Question = () => {
     let navigate = useNavigate();
 
     const { questionId } = useParams<string>()
-    const { createComment, createCommentIsLoading, getQuestionByUUID, getQuestionCommentsByUUID, deleteQuestion, deleteQuestionIsLoading } = useQuestion()
+    const { createComment, createCommentIsLoading, getQuestionByUUID, getQuestionCommentsByUUID, deleteQuestion, deleteQuestionIsLoading, deleteQuestionImages } = useQuestion()
     const { question, questionIsLoading, questionIsError } = getQuestionByUUID(questionId!);
     const { comments, commentsIsLoading, commentsIsError, commentsMutate } = getQuestionCommentsByUUID(questionId!);
 
@@ -80,16 +81,24 @@ const Question = () => {
     const handleDeleteQuestion = async () => {
         try {
             showYesNoModal("Soruyu silmek istediğinize emin misiniz?", deleteQuestionIsLoading, async () => {
-                const res = await deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! });
-                if (res?.status === true) {
+                const deleteImages = await deleteQuestionImages(question!)
+                if (deleteImages) {
+                    const res = await deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! });
+                    if (res?.status === true) {
+                        toast({
+                            title: "Bilgi",
+                            description: res.message,
+                        })
+                        mutate(`${import.meta.env.VITE_API}/question`, undefined, { revalidate: true });
+                        setTimeout(() => {
+                            navigate("/questions")
+                        }, 1 * 1000);
+                    }
+                } else {
                     toast({
                         title: "Bilgi",
-                        description: res.message,
+                        description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
                     })
-                    mutate(`${import.meta.env.VITE_API}/question`, undefined, { revalidate: true });
-                    setTimeout(() => {
-                        navigate("/questions")
-                    }, 1 * 1000);
                 }
             })
         } catch (error) {
@@ -129,7 +138,10 @@ const Question = () => {
                                 #{question?.uuid}
                             </p>
                             <Link to={`/profile/${question.User.uuid}`} className="flex justify-start items-center gap-2">
-                                <img src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${question.User.avatar}`} alt="User profile picture" className="w-14 h-14 rounded-full" />
+                                <Avatar className="w-14 h-14 rounded-full">
+                                    <AvatarImage src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${question.User.avatar}`} />
+                                    <AvatarFallback>{question.User.nickname}</AvatarFallback>
+                                </Avatar>
                                 <div className="w-full flex flex-col justify-center items-start">
                                     <p className="w-full truncate font-medium">
                                         {question?.User?.nickname}

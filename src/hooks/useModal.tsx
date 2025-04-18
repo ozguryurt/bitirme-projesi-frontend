@@ -40,8 +40,8 @@ const useModal = (): ModalType => {
                 </div>
             );
 
-            await yesBtnFn(); // Asenkron işlemi bekle
-            closeModal(); // İşlem bitince modalı kapat
+            await yesBtnFn()
+            closeModal()
         };
 
         setModalBody(

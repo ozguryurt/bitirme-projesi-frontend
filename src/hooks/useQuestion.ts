@@ -102,6 +102,28 @@ const useQuestion = () => {
         (url, { arg }: { arg: { question_uuid: string; user_uuid: string } }) => fetcherDelete(`${url}/${arg.question_uuid}/delete`, arg)
     );
 
+    const deleteQuestionImages = async (questionData: QuestionType) => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API}/question/delete-images`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "question_uuid": questionData.uuid,
+                    "image_list": questionData.image,
+                    "user_uuid": questionData.User.uuid
+                }),
+                credentials: "include",
+            })
+            if (res.status === 200)
+                return true
+            return false
+        } catch (err) {
+
+        }
+    }
+
     const {
         trigger: createComment,
         isMutating: createCommentIsLoading,
@@ -135,6 +157,7 @@ const useQuestion = () => {
         deleteQuestion,
         deleteQuestionIsLoading,
         deleteQuestionIsError,
+        deleteQuestionImages,
 
         getQuestionByUUID,
         getQuestionCommentsByUUID,

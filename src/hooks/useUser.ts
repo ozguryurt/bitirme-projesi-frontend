@@ -5,6 +5,14 @@ import UserType from "@/types/UserType";
 import useSWR from "swr";
 import useSWRMutation from 'swr/mutation';
 
+
+/*
+interface UploadAvatarType {
+    uuid: string;
+    avatar: any
+}
+*/
+
 const useUser = () => {
 
     /*

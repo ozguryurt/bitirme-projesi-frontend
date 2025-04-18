@@ -55,8 +55,8 @@ const Questions = () => {
 
     return (
         <>
-            <div className="grid grid-cols-1 lg:grid-cols-2 px-5 lg:px-24 py-5 gap-5">
-                <div className="flex col-span-1 lg:col-span-2 justify-end items-center gap-2">
+            <div className="flex flex-col px-5 lg:px-24 py-5 gap-5">
+                <div className="flex lg:justify-end justify-center items-center gap-2">
                     <Select value={selectedSort ? selectedSort : undefined} onValueChange={handleSortButton}>
                         <SelectTrigger className="w-[150px]">
                             <SelectValue placeholder="Sırala" />
@@ -73,17 +73,24 @@ const Questions = () => {
                         <Link to={`/new-question`}><Plus /> Yeni soru</Link>
                     </Button>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 col-span-1 lg:col-span-2 gap-2">
+                <div className="flex justify-center items-center gap-2">
                     {
                         isError ? <>Bir hata meydana geldi.</> :
-                            isLoading ? <LoadingIcon /> : questions ? questions.map((question, index) => {
-                                return (
-                                    <QuestionCard
-                                        key={index}
-                                        data={question}
-                                    />
-                                );
-                            }) : <p className="text-center">Soru bulunamadı.</p>
+                            isLoading ? <LoadingIcon /> : questions ?
+                                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-2">
+                                    {
+                                        questions.map((question, index) => {
+                                            return (
+                                                <QuestionCard
+                                                    key={index}
+                                                    data={question}
+                                                />
+                                            );
+                                        })
+                                    }
+                                </div>
+                                :
+                                <p className="text-center">Soru bulunamadı.</p>
                     }
                 </div>
             </div>

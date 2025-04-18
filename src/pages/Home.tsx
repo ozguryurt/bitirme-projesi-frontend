@@ -1,3 +1,5 @@
+import { Link } from "react-router"
+
 const Home = () => {
     return (
         <>
@@ -10,6 +12,10 @@ const Home = () => {
                         </p>
                         <p className="font-normal text-xl text-center">
                             For over 15 years we’ve been the Q&A platform of choice that millions of people visit every month to ask questions, learn, and share technical knowledge.
+                        </p>
+                        <p className="font-normal text-xl text-center">
+                            Join our community today and unlock the power of collective knowledge.<br />
+                            <Link to={"/register"} className="text-blue-500">Create your account now!</Link>
                         </p>
                     </div>
                     <div className="flex justify-center items-center">
