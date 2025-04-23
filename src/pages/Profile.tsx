@@ -124,7 +124,7 @@ const Profile: React.FC = () => {
                     <div className="relative">
                       <Avatar className="w-32 h-32">
                         <AvatarImage src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${user.avatar}`} />
-                        <AvatarFallback>{userData?.nickname}</AvatarFallback>
+                        <AvatarFallback>{user.nickname}</AvatarFallback>
                       </Avatar>
                       {
                         userData &&

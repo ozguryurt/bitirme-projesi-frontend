@@ -8,9 +8,11 @@ const QuestionImage = ({ path, onClickFn }: { path: string, onClickFn?: () => vo
     const newPath = path.includes("http") ? path : `${import.meta.env.VITE_IMAGE_BASEPATH}/${path}`
 
     const handleClick = () => {
-        showModal("Resim", "", <>
-            <img onClick={handleClick} src={newPath} alt="" className={`rounded-md w-full h-auto`} />
-        </>)
+        showModal({
+            title: "Resim",
+            description: "",
+            body: <img onClick={handleClick} src={newPath} alt="" className={`rounded-md w-full h-auto`} />
+        })
     }
 
     return (

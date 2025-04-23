@@ -65,7 +65,7 @@ const Login = () => {
         <>
             <div className="min-h-screen flex flex-col justify-center items-center px-5 lg:px-24 py-5 gap-5">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full lg:w-9/12">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full lg:w-5/12">
                         <FormField
                             control={form.control}
                             name="email"

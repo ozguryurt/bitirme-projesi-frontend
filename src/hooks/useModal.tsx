@@ -4,22 +4,22 @@ import { Loader2 } from "lucide-react"
 import { ReactNode } from "react"
 
 type ModalType = {
-    showModal: (title: string, description: string, body: ReactNode) => void
+    showModal: ({ title, description, body }: { title: string, description: string, body: ReactNode }) => void
     closeModal: () => void
-    showYesNoModal: (text: string, disabledStatus: boolean, yesBtnFn: () => Promise<void>) => void
+    showYesNoModal: ({ text, disabledStatus, yesBtnFn }: { text: string, disabledStatus: boolean, yesBtnFn: () => Promise<void> }) => void
 }
 
 const useModal = (): ModalType => {
     const { setStatus, setModalTitle, setModalDescription, setModalBody } = useModalStore()
 
-    const showModal = (title: string, description: string, body: ReactNode) => {
+    const showModal = ({ title, description, body }: { title: string, description: string, body: ReactNode }) => {
         setStatus(true)
         setModalTitle(title)
         setModalDescription(description)
         setModalBody(body)
     }
 
-    const showYesNoModal = (text: string, disabledStatus: boolean, yesBtnFn: () => Promise<void>) => {
+    const showYesNoModal = ({ text, disabledStatus, yesBtnFn }: { text: string, disabledStatus: boolean, yesBtnFn: () => Promise<void> }) => {
         setStatus(true);
         setModalTitle("Bilgi");
         setModalDescription("");

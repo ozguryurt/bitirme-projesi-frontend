@@ -78,8 +78,9 @@ const Header = () => {
                     <div className="flex justify-start items-center gap-3">
                         <NavigationMenuItem>
                             <NavigationMenuLink asChild>
-                                <Link to="/" className={navigationMenuTriggerStyle()}>
-                                    Ana sayfa
+                                <Link to="/" className={navigationMenuTriggerStyle() + " flex justify-center items-center"}>
+                                    <img src="/logo.png" className="w-auto max-h-8" alt="Header logo image" />
+                                    <p>Stackoverflow</p>
                                 </Link>
                             </NavigationMenuLink>
                         </NavigationMenuItem>

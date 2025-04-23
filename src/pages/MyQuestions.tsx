@@ -29,15 +29,28 @@ const MyQuestions = () => {
 
     const handleDeleteQuestion = async (questionId: string) => {
         try {
-            showYesNoModal("Soruyu silmek istediğinize emin misiniz?", deleteQuestionIsLoading, async () => {
-                const res = await deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! });
-                if (res?.status === true) {
-                    showModal("Başarılı", res.message, <></>)
-                    await questionsMutate()
+
+            showYesNoModal({
+                text: "Soruyu silmek istediğinize emin misiniz?",
+                disabledStatus: deleteQuestionIsLoading,
+                yesBtnFn: async () => {
+                    const res = await deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! });
+                    if (res?.status === true) {
+                        showModal({
+                            title: "Başarılı",
+                            description: res.message,
+                            body: ""
+                        })
+                        await questionsMutate()
+                    }
                 }
             })
         } catch (error) {
-            showModal("Başarısız", "Bir hata meydana geldi, daha sonra tekrar deneyin.", <></>)
+            showModal({
+                title: "Başarısız",
+                description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
+                body: ""
+            })
         }
     }
 

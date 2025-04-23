@@ -19,14 +19,18 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
 
     const handleDeleteComment = async () => {
         try {
-            showYesNoModal("Yorumu silmek istediğinize emin misiniz?", deleteCommentIsLoading, async () => {
-                const res = await deleteComment({ comment_uuid: data.uuid!, user_uuid: userData?.uuid! });
-                if (res?.status === true) {
-                    toast({
-                        title: "Bilgi",
-                        description: res.message,
-                    })
-                    if (commentsMutateFn) commentsMutateFn()
+            showYesNoModal({
+                text: "Yorumu silmek istediğinize emin misiniz?",
+                disabledStatus: deleteCommentIsLoading,
+                yesBtnFn: async () => {
+                    const res = await deleteComment({ comment_uuid: data.uuid!, user_uuid: userData?.uuid! });
+                    if (res?.status === true) {
+                        toast({
+                            title: "Bilgi",
+                            description: res.message,
+                        })
+                        if (commentsMutateFn) commentsMutateFn()
+                    }
                 }
             })
         } catch (error) {

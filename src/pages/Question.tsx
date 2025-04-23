@@ -80,9 +80,12 @@ const Question = () => {
 
     const handleDeleteQuestion = async () => {
         try {
-            showYesNoModal("Soruyu silmek istediğinize emin misiniz?", deleteQuestionIsLoading, async () => {
-                const deleteImages = await deleteQuestionImages(question!)
-                if (deleteImages) {
+            showYesNoModal({
+                text: "Soruyu silmek istediğinize emin misiniz?",
+                disabledStatus: deleteQuestionIsLoading,
+                yesBtnFn: async () => {
+                    const deleteImages = await deleteQuestionImages(question!)
+                    console.log(deleteImages)
                     const res = await deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! });
                     if (res?.status === true) {
                         toast({
@@ -94,11 +97,6 @@ const Question = () => {
                             navigate("/questions")
                         }, 1 * 1000);
                     }
-                } else {
-                    toast({
-                        title: "Bilgi",
-                        description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
-                    })
                 }
             })
         } catch (error) {

@@ -25,6 +25,7 @@ import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import useAuthStore from './stores/authStore';
+import AskAI from './pages/AskAI';
 
 // Özel rota: Kullanıcı giriş yapmadıysa login sayfasına yönlendir
 const UnprivateRoute = ({ element }: { element: JSX.Element }) => {
@@ -55,6 +56,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/myquestions" element={<PrivateRoute element={<MyQuestions />} />} />
           <Route path="/questions" element={<Questions />} />
           <Route path="/new-question" element={<PrivateRoute element={<NewQuestion />} />} />
+          <Route path="/ask-ai" element={<PrivateRoute element={<AskAI />} />} />
           <Route path="/question/:questionId/edit-question" element={<PrivateRoute element={<EditQuestion />} />} />
           <Route path="/question/:questionId" element={<Question />} />
           <Route path="/login" element={<UnprivateRoute element={<Login />} />} />
