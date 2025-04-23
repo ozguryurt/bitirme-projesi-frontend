@@ -20,12 +20,12 @@ const AskAI = () => {
     const { showModal } = useModal()
 
     const [messages, setMessages] = useState<Message[]>([
-        {
+        /*{
             id: "1",
             content: "Merhaba, size nasıl yardımcı olabilirim?",
             role: "assistant",
             timestamp: new Date(),
-        },
+        },*/
     ])
     const [input, setInput] = useState("")
     const [isLoading, setIsLoading] = useState(false)
@@ -83,6 +83,13 @@ const AskAI = () => {
 
             <ScrollArea className="h-[40rem] w-full rounded-md border p-5">
                 <div className="space-y-4">
+                    {
+                        messages.length === 0 &&
+                        <div className="flex flex-col justify-center items-center gap-2">
+                            <p className="font-bold text-3xl text-center bg-gradient-to-r from-blue-500 to-red-400 bg-clip-text text-transparent">Merhaba, {userData?.nickname}.</p>
+                            <p className="font-medium text-base text-center">Nasıl yardımcı olabilirim?</p>
+                        </div>
+                    }
                     {messages.map((message) => (
                         <div
                             key={message.id}
@@ -140,7 +147,7 @@ const AskAI = () => {
                 <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Sorunuzu yazın..."
+                    placeholder="StackAI'a sorun..."
                     className="flex-1"
                 />
                 <Button type="submit" disabled={isLoading || !input.trim()}>
