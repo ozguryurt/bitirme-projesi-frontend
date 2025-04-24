@@ -1,6 +1,7 @@
 import { fetcher } from '@/lib/fetcher';
 import { fetcherDelete } from '@/lib/fetcherDelete';
 import { fetcherPutBody } from '@/lib/fetcherPutBody';
+import { fetcherWithBody } from '@/lib/fetcherWithBody';
 import { fetcherWithFormData } from '@/lib/fetcherWithFormData';
 import CommentType from '@/types/question/CommentType';
 import QuestionTagType from '@/types/question/QuestionTagType';
@@ -125,6 +126,15 @@ const useQuestion = () => {
     }
 
     const {
+        trigger: askAI,
+        isMutating: askAIIsLoading,
+        error: askAIIsError
+    } = useSWRMutation(
+        `${import.meta.env.VITE_AI_API}`, // URL
+        (url, { arg }: { arg: { question: string } }) => fetcherWithBody(`${url}`, { arg })
+    );
+
+    const {
         trigger: createComment,
         isMutating: createCommentIsLoading,
         error: createCommentIsError
@@ -145,6 +155,10 @@ const useQuestion = () => {
     return {
         getTags,
         getQuestions,
+
+        askAI,
+        askAIIsLoading,
+        askAIIsError,
 
         createQuestion,
         createQuestionIsLoading,
