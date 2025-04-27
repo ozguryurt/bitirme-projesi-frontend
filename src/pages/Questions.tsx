@@ -14,15 +14,14 @@ import useModal from "@/hooks/useModal"
 import { Plus } from "lucide-react"
 import QuestionFilter from "@/modals/QuestionFilter"
 import useFilterStore from "@/stores/filterStore"
-import { useEffect, useState } from "react"
 import useQuestion from "@/hooks/useQuestion"
 import LoadingIcon from "@/components/custom/LoadingIcon"
 import { useAuth } from "@/providers/AuthProvider"
 import AskAIButton from "@/components/custom/AskAIButton"
+import { useEffect } from "react"
 
 const Questions = () => {
 
-    const { search } = useLocation()
     let navigate = useNavigate()
     const { showModal } = useModal()
     const { userData } = useAuth()
@@ -30,18 +29,34 @@ const Questions = () => {
     const { getQuestions } = useQuestion()
     const { questions, isLoading, isError } = getQuestions();
 
-    const [selectedSort, setSelectedSort] = useState<string | null>(null)
+    const { filters, sortOrder, setFilters, setSortOrder } = useFilterStore()
 
-    const { filters, setSortOrder } = useFilterStore()
+    const { search } = useLocation()
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(search)
-        const sortParam = urlParams.get('sort')
-        if (sortParam === 'asc' || sortParam === 'desc')
-            setSelectedSort(sortParam)
-        else
-            setSelectedSort(null)
-    }, [search])
+        const urlParams = new URLSearchParams(search);
+
+        const tagsParam = urlParams.get('tags');
+        const sortParam = urlParams.get('sort');
+
+        if (tagsParam) {
+            setFilters(tagsParam.split(','));
+        } else {
+            setFilters([]);
+        }
+
+        if (sortParam === 'asc' || sortParam === 'desc') {
+            setSortOrder(sortParam);
+        } else {
+            setSortOrder('');
+        }
+    }, [search]);
+
+    const handleRemoveFilters = () => {
+        setFilters([])
+        setSortOrder("")
+        navigate("/questions")
+    }
 
     const handleFilterButton = async () => {
         showModal({
@@ -63,7 +78,7 @@ const Questions = () => {
         <>
             <div className="flex flex-col px-5 lg:px-24 py-5 gap-5">
                 <div className="flex lg:justify-end justify-center items-center gap-3">
-                    <Select value={selectedSort ? selectedSort : undefined} onValueChange={handleSortButton}>
+                    <Select value={sortOrder ? sortOrder : undefined} onValueChange={handleSortButton}>
                         <SelectTrigger className="w-[150px]">
                             <SelectValue placeholder="Sırala" />
                         </SelectTrigger>
@@ -75,6 +90,12 @@ const Questions = () => {
                         </SelectContent>
                     </Select>
                     <Button onClick={handleFilterButton}>Filtrele</Button>
+                    {
+                        (filters.length > 0 || sortOrder !== "") &&
+                        <>
+                            <Button variant="destructive" onClick={handleRemoveFilters}>Filtreleri temizle</Button>
+                        </>
+                    }
                     {
                         userData &&
                         <>

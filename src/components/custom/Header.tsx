@@ -98,7 +98,7 @@ const Header = () => {
                             <>
                                 <Sheet>
                                     <SheetTrigger className="lg:hidden block" asChild>
-                                        <AlignJustify />
+                                        <AlignJustify className="cursor-pointer" />
                                     </SheetTrigger>
                                     <SheetContent>
                                         <div className="grid gap-2 py-4">

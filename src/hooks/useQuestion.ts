@@ -6,6 +6,7 @@ import { fetcherWithFormData } from '@/lib/fetcherWithFormData';
 import CommentType from '@/types/question/CommentType';
 import QuestionTagType from '@/types/question/QuestionTagType';
 import QuestionType from '@/types/question/QuestionType';
+import { useLocation } from 'react-router';
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 
@@ -30,7 +31,8 @@ const useQuestion = () => {
         isLoading: boolean;
         isError: any;
     } => {
-        const { data, error, isLoading } = useSWR(`${import.meta.env.VITE_API}/question`, fetcher);
+        const { search } = useLocation();
+        const { data, error, isLoading } = useSWR(`${import.meta.env.VITE_API}/question/questions${search}`, fetcher);
 
         return {
             questions: data?.data !== undefined ? data.data : null,

@@ -20,13 +20,16 @@ import useUser from "@/hooks/useUser"
 import { useToast } from "@/hooks/use-toast"
 import avatarSchema from "@/schemas/avatarSchema"
 import LoadingIcon from "@/components/custom/LoadingIcon"
+import QuestionCard from "@/components/custom/QuestionCard"
+import Divider from "@/components/custom/Divider"
 
 const Profile: React.FC = () => {
 
   const { userData, check } = useAuth()
   const { userId } = useParams()
-  const { uploadAvatar, uploadAvatarIsLoading, getUserByUUID } = useUser()
+  const { uploadAvatar, uploadAvatarIsLoading, getUserByUUID, getUserQuestions } = useUser()
   const { user, userIsLoading, userIsError } = getUserByUUID(userId!);
+  const { questions, questionsIsLoading, questionsIsError } = getUserQuestions(userId!);
   const { toast } = useToast()
 
   const [changePicture, setChangePicture] = useState<boolean>(false)
@@ -80,8 +83,8 @@ const Profile: React.FC = () => {
       {
         userIsError ? <>Bir hata meydana geldi.</> :
           userIsLoading ? <LoadingIcon /> : user ?
-            <div className="flex justify-center items-center px-5 lg:px-24 py-5 gap-5">
-              <div className="flex justify-center items-center flex-col gap-3">
+            <div className="flex flex-col justify-center items-center px-5 lg:px-24 py-5 gap-5">
+              <div className="flex flex-col justify-center items-center gap-3">
                 {
                   changePicture ?
                     <Form {...avatarForm}>
@@ -137,6 +140,28 @@ const Profile: React.FC = () => {
                 <p className="font-medium text-sm">{user.email}</p>
                 <p className="font-medium text-sm">{user.website}</p>
                 <p className="font-medium text-sm">{user.about}</p>
+              </div>
+              <Divider />
+              <div className="flex flex-col justify-center items-center gap-3">
+                <p className="text-center font-bold text-xl">@{user.nickname} soruları</p>
+                {
+                  questionsIsError ? <>Bir hata meydana geldi.</> :
+                    questionsIsLoading ? <LoadingIcon /> : questions ?
+                      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-2">
+                        {
+                          questions.slice(0, 3).map((question, index) => {
+                            return (
+                              <QuestionCard
+                                key={index}
+                                data={question}
+                              />
+                            );
+                          })
+                        }
+                      </div>
+                      :
+                      <p className="text-center">Soru bulunamadı.</p>
+                }
               </div>
             </div>
             :

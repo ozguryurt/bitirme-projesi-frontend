@@ -1,4 +1,5 @@
 import { fetcher } from "@/lib/fetcher";
+import { fetcherPutBody } from "@/lib/fetcherPutBody";
 import { fetcherWithPutFormData } from "@/lib/fetcherWithPutFormData";
 import QuestionType from "@/types/question/QuestionType";
 import UserType from "@/types/UserType";
@@ -90,10 +91,24 @@ const useUser = () => {
         };
     };
 
+    const {
+        trigger: updateUser,
+        isMutating: updateUserIsLoading,
+        error: updateUserIsError
+    } = useSWRMutation(
+        `${import.meta.env.VITE_API}/user/update`,
+        (url, { arg }: { arg: any }) => fetcherPutBody(`${url}`, arg)
+    );
+
     return {
         uploadAvatar,
         uploadAvatarIsLoading,
         uploadAvatarIsError,
+
+        updateUser,
+        updateUserIsLoading,
+        updateUserIsError,
+
         getUserByUUID,
         getUserQuestions
     };

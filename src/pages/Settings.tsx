@@ -16,10 +16,15 @@ import { Input } from "@/components/ui/input"
 import Divider from "@/components/custom/Divider"
 import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/providers/AuthProvider"
+import useUser from "@/hooks/useUser"
+import { useToast } from "@/hooks/use-toast"
+import { Loader2 } from "lucide-react"
 
 const Settings = () => {
 
     const { userData } = useAuth()
+    const { updateUser, updateUserIsLoading } = useUser()
+    const { toast } = useToast()
 
     const settingForm = useForm<z.infer<typeof settingsSchema>>({
         resolver: zodResolver(settingsSchema),
@@ -31,12 +36,42 @@ const Settings = () => {
             website: userData?.website,
             about: userData?.about,
             password: "",
-            passwordAgain: ""
+            passwordAgain: "",
+            tel: userData?.tel
         },
     })
 
-    function onSubmit(data: z.infer<typeof settingsSchema>) {
-        console.log(data)
+    async function onSubmit(data: z.infer<typeof settingsSchema>) {
+        try {
+            const res = await updateUser({
+                "Name": data.name,
+                "Lastname": data.lastname,
+                "Nickname": data.nickname,
+                "Website": data.website,
+                "About": data.about,
+                "Password": data.password,
+                "Repassword": data.passwordAgain,
+                "Email": data.email,
+                "Tel": data.tel
+            });
+            if (res?.status === true) {
+                toast({
+                    title: "Bilgi",
+                    description: res.message,
+                })
+            }
+            else {
+                toast({
+                    title: "Bilgi",
+                    description: res.message,
+                })
+            }
+        } catch (error) {
+            toast({
+                title: "Bilgi",
+                description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
+            })
+        }
     }
 
     return (
@@ -77,6 +112,19 @@ const Settings = () => {
                                 <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Soyad</FormLabel>
                                 <FormControl>
                                     <Input placeholder="Soyad" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
+                                </FormControl>
+                                <FormMessage className="font-medium text-xs" />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={settingForm.control}
+                        name="tel"
+                        render={({ field }) => (
+                            <FormItem className="col-span-1 lg:col-span-2">
+                                <FormLabel className="font-medium text-base text-zinc-800 dark:text-white">Telefon numarası</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Telefon numarası" {...field} className="font-medium text-base text-zinc-800 dark:text-white" />
                                 </FormControl>
                                 <FormMessage className="font-medium text-xs" />
                             </FormItem>
@@ -148,7 +196,16 @@ const Settings = () => {
                             </FormItem>
                         )}
                     />
-                    <Button className="col-span-1 lg:col-span-2" type="submit">Güncelle</Button>
+                    <Button className="col-span-1 lg:col-span-2" type="submit" disabled={updateUserIsLoading}>
+                        {
+                            updateUserIsLoading ? (
+                                <>
+                                    <Loader2 className="animate-spin" />
+                                    Lütfen bekleyin
+                                </>
+                            ) : "Güncelle"
+                        }
+                    </Button>
                 </form>
             </Form>
         </div>
