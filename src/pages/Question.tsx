@@ -155,7 +155,7 @@ const Question = () => {
                             />
                             <div className="w-full flex flex-wrap gap-3">
                                 {
-                                    question?.Tags?.map((tag, index) => <Link to={`/questions?tags=${tag.uuid}`} key={index} className="font-medium text-blue-500 text-xs">#{tag.name}</Link>)
+                                    question?.Tags?.map((tag, index) => <Link to={`/questions?tags=${tag.name}`} key={index} className="font-medium text-blue-500 text-xs">#{tag.name}</Link>)
                                 }
                             </div>
                             {

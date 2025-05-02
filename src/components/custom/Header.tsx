@@ -4,7 +4,7 @@ import {
     CircleHelp,
     Loader2,
     LogOut,
-    Megaphone,
+    //Megaphone,
     Settings,
     User,
 } from "lucide-react"
@@ -24,7 +24,7 @@ import {
     NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 import { Link } from "react-router"
-import { Badge } from "@/components/ui/badge"
+//import { Badge } from "@/components/ui/badge"
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 import { useState } from "react"
 import NotificationCard from "./NotificationCard"
@@ -168,14 +168,18 @@ const Header = () => {
                                                         Sorularım
                                                     </Link>
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                    <Megaphone />
-                                                    <span className="cursor-pointer" onClick={(event) => {
-                                                        event.preventDefault();
-                                                        setTab(1);
-                                                    }}>Bildirimler</span>
-                                                    <Badge variant="outline">1</Badge>
-                                                </DropdownMenuItem>
+                                                {
+                                                    /*
+                                                    <DropdownMenuItem>
+                                                        <Megaphone />
+                                                        <span className="cursor-pointer" onClick={(event) => {
+                                                            event.preventDefault();
+                                                            setTab(1);
+                                                        }}>Bildirimler</span>
+                                                        <Badge variant="outline">1</Badge>
+                                                    </DropdownMenuItem>
+                                                    */
+                                                }
                                             </DropdownMenuGroup>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={handleLogout}>

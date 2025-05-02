@@ -142,7 +142,7 @@ const Profile: React.FC = () => {
                 <p className="font-medium text-sm">{user.about}</p>
               </div>
               <Divider />
-              <div className="flex flex-col justify-center items-center gap-3">
+              <div className="w-full flex flex-col justify-center items-center gap-3">
                 <p className="text-center font-bold text-xl">@{user.nickname} soruları</p>
                 {
                   questionsIsError ? <>Bir hata meydana geldi.</> :

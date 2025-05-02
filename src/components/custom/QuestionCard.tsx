@@ -34,7 +34,7 @@ const QuestionCard = ({ data }: { data: QuestionType }) => {
                 <Divider />
                 <div className="w-full flex flex-wrap gap-3">
                     {
-                        data.Tags?.slice(0, 3).map((tag, index) => <p onClick={() => navigate(`/questions?tags=${tag.uuid}`)} key={index} className="font-medium text-blue-500 text-xs">#{tag.name}</p>)
+                        data.Tags?.slice(0, 3).map((tag, index) => <p onClick={() => navigate(`/questions?tags=${tag.name}`)} key={index} className="font-medium text-blue-500 text-xs">#{tag.name}</p>)
                     }
                 </div>
             </div>

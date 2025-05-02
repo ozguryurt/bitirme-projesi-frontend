@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form"
 import settingsSchema from "@/schemas/settingsSchema"
 import { Input } from "@/components/ui/input"
-import Divider from "@/components/custom/Divider"
+//import Divider from "@/components/custom/Divider"
 import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/providers/AuthProvider"
 import useUser from "@/hooks/useUser"
@@ -35,8 +35,8 @@ const Settings = () => {
             email: userData?.email,
             website: userData?.website,
             about: userData?.about,
-            password: "",
-            passwordAgain: "",
+            //password: "",
+            //passwordAgain: "",
             tel: userData?.tel
         },
     })
@@ -49,8 +49,8 @@ const Settings = () => {
                 "Nickname": data.nickname,
                 "Website": data.website,
                 "About": data.about,
-                "Password": data.password,
-                "Repassword": data.passwordAgain,
+                //"Password": data.password,
+                //"Repassword": data.passwordAgain,
                 "Email": data.email,
                 "Tel": data.tel
             });
@@ -169,6 +169,8 @@ const Settings = () => {
                             </FormItem>
                         )}
                     />
+                    {
+                        /*
                     <Divider customClass="col-span-1 lg:col-span-2" />
                     <FormField
                         control={settingForm.control}
@@ -196,6 +198,8 @@ const Settings = () => {
                             </FormItem>
                         )}
                     />
+                        */
+                    }
                     <Button className="col-span-1 lg:col-span-2" type="submit" disabled={updateUserIsLoading}>
                         {
                             updateUserIsLoading ? (
