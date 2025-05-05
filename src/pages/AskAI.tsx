@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Info, Loader2, SendIcon } from "lucide-react"
+import { Info, SendIcon } from "lucide-react"
 import { useAuth } from "@/providers/AuthProvider"
 import useModal from "@/hooks/useModal"
 import useQuestion from "@/hooks/useQuestion"
@@ -108,15 +108,17 @@ const AskAI = () => {
                             </div>
                         </>
                     ))}
-                    {askAIIsError ? <>Bir hata meydana geldi.</> :
+                    {askAIIsError ? <></> :
                         askAIIsLoading && (
                             <>
-                                <div className="flex gap-3 justify-end">
-                                    <div className={`flex flex-col gap-1 items-start`}>
-                                        <div
-                                            className={`rounded-lg px-4 py-2 bg-primary`}
-                                        >
-                                            <Loader2 className="animate-spin dark:text-white text-zinc-800" />
+                                <div className={`flex gap-3 justify-end`}>
+                                    <div className={`flex flex-col gap-1 items-end`}>
+                                        <div className={`rounded-lg px-4 py-2 bg-primary`}>
+                                            <div className="flex space-x-2">
+                                                <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"></div>
+                                                <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-75"></div>
+                                                <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-150"></div>
+                                            </div>
                                         </div>
                                     </div>
                                     <Avatar className="h-12 w-12">
@@ -130,9 +132,7 @@ const AskAI = () => {
                                         <AvatarFallback>StackAI</AvatarFallback>
                                     </Avatar>
                                     <div className={`flex flex-col gap-1 items-start`}>
-                                        <div
-                                            className={`rounded-lg px-4 py-2 bg-muted`}
-                                        >
+                                        <div className={`rounded-lg px-4 py-2 bg-muted`}>
                                             <div className="flex space-x-2">
                                                 <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"></div>
                                                 <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-75"></div>
