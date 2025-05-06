@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
+import './fonts.css'
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 
 import { AuthProvider } from './providers/AuthProvider';
