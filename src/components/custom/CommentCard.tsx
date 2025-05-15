@@ -1,6 +1,6 @@
 import { Link } from "react-router"
 import Divider from "./Divider"
-import { ChevronsDown, ChevronsUp, Trash } from "lucide-react"
+import { ChevronsDown, ChevronsUp, Loader2, Trash } from "lucide-react"
 import CommentType from "@/types/question/CommentType"
 import { timeAgo } from "@/lib/timeAgo"
 import { useAuth } from "@/providers/AuthProvider"
@@ -17,13 +17,41 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
     const { showYesNoModal } = useModal()
     const { toast } = useToast()
     const { deleteComment, deleteCommentIsLoading } = useQuestion()
-    const { getCommentReactions } = useComment()
+    const { getCommentReactions, likeComment, likeCommentIsLoading, dislikeComment, dislikeCommentIsLoading } = useComment()
     const {
         reactions,
         //reactionsIsLoading,
         //reactionsIsError,
         //reactionsMutate
     } = getCommentReactions(data?.uuid!)
+
+    const handleReaction = async (reaction_type: string) => {
+        if (reaction_type === "like") {
+            const res = await likeComment({ comment_uuid: data.uuid! });
+            if (res?.status === true)
+                toast({
+                    title: "Bilgi",
+                    description: res.message,
+                })
+            else
+                toast({
+                    title: "Bilgi",
+                    description: res.message,
+                })
+        } else {
+            const res = await dislikeComment({ comment_uuid: data.uuid! });
+            if (res?.status === true)
+                toast({
+                    title: "Bilgi",
+                    description: res.message,
+                })
+            else
+                toast({
+                    title: "Bilgi",
+                    description: res.message,
+                })
+        }
+    }
 
     const handleDeleteComment = async () => {
         try {
@@ -71,13 +99,29 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
                 </div>
                 <Divider />
                 <div className="w-full flex justify-start items-center gap-3">
-                    <div className="flex justify-center items-center gap-1 cursor-pointer">
+                    <div className="flex justify-center items-center gap-1 cursor-pointer" onClick={() => handleReaction("like")}>
                         <ChevronsUp className="text-green-500" />
                         <span className="text-xs font-medium">{reactions?.like_count}</span>
+                        {
+                            likeCommentIsLoading ?
+                                <Loader2 className="animate-spin" />
+                                :
+                                <>
+                                    <ChevronsUp className="text-green-500" />
+                                    <span className="text-xs font-medium">{reactions?.like_count}</span>
+                                </>
+                        }
                     </div>
-                    <div className="flex justify-center items-center gap-1 cursor-pointer">
-                        <ChevronsDown className="text-red-500" />
-                        <span className="text-xs font-medium">{reactions?.dislike_count}</span>
+                    <div className="flex justify-center items-center gap-1 cursor-pointer" onClick={() => handleReaction("dislike")}>
+                        {
+                            dislikeCommentIsLoading ?
+                                <Loader2 className="animate-spin" />
+                                :
+                                <>
+                                    <ChevronsDown className="text-red-500" />
+                                    <span className="text-xs font-medium">{reactions?.dislike_count}</span>
+                                </>
+                        }
                     </div>
                     {
                         userData?.uuid === data.user_uuid && (

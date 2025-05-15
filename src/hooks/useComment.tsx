@@ -1,5 +1,7 @@
 import { fetcher } from '@/lib/fetcher';
+import { fetcherWithBody } from '@/lib/fetcherWithBody';
 import useSWR from 'swr';
+import useSWRMutation from 'swr/mutation';
 
 const useComment = () => {
 
@@ -22,26 +24,34 @@ const useComment = () => {
         };
     };
 
-    /*const {
+    const {
         trigger: likeComment,
         isMutating: likeCommentIsLoading,
         error: likeCommentIsError
     } = useSWRMutation(
         `${import.meta.env.VITE_API}/comment`,  // URL
-        (url, { arg }: { arg: { question_uuid: string; formData: FormData } }) => fetcherWithFormData(`${url}/${arg.question_uuid}/add-comment`, arg.formData)
+        (url, { arg }: { arg: { comment_uuid: string } }) => fetcherWithBody(`${url}/${arg.comment_uuid}/like`, { arg })
     );
 
     const {
-        trigger: deleteComment,
-        isMutating: deleteCommentIsLoading,
-        error: deleteCommentIsError
+        trigger: dislikeComment,
+        isMutating: dislikeCommentIsLoading,
+        error: dislikeCommentIsError
     } = useSWRMutation(
         `${import.meta.env.VITE_API}/comment`,  // URL
-        (url, { arg }: { arg: { comment_uuid: string; user_uuid: string } }) => fetcherDelete(`${url}/${arg.comment_uuid}/delete-comment`, { user_uuid: arg.user_uuid })
-    );*/
+        (url, { arg }: { arg: { comment_uuid: string } }) => fetcherWithBody(`${url}/${arg.comment_uuid}/dislike`, { arg })
+    );
 
     return {
-        getCommentReactions
+        getCommentReactions,
+
+        likeComment,
+        likeCommentIsLoading,
+        likeCommentIsError,
+
+        dislikeComment,
+        dislikeCommentIsLoading,
+        dislikeCommentIsError
     };
 };
 
