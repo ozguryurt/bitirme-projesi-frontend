@@ -9,6 +9,7 @@ import useModal from "@/hooks/useModal"
 import useQuestion from "@/hooks/useQuestion"
 import { useToast } from "@/hooks/use-toast"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import useComment from "@/hooks/useComment"
 
 const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMutateFn?: () => void; }) => {
 
@@ -16,6 +17,13 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
     const { showYesNoModal } = useModal()
     const { toast } = useToast()
     const { deleteComment, deleteCommentIsLoading } = useQuestion()
+    const { getCommentReactions } = useComment()
+    const {
+        reactions,
+        //reactionsIsLoading,
+        //reactionsIsError,
+        //reactionsMutate
+    } = getCommentReactions(data?.uuid!)
 
     const handleDeleteComment = async () => {
         try {
@@ -65,11 +73,11 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
                 <div className="w-full flex justify-start items-center gap-3">
                     <div className="flex justify-center items-center gap-1 cursor-pointer">
                         <ChevronsUp className="text-green-500" />
-                        <span className="text-xs font-medium">7</span>
+                        <span className="text-xs font-medium">{reactions?.like_count}</span>
                     </div>
                     <div className="flex justify-center items-center gap-1 cursor-pointer">
                         <ChevronsDown className="text-red-500" />
-                        <span className="text-xs font-medium">4</span>
+                        <span className="text-xs font-medium">{reactions?.dislike_count}</span>
                     </div>
                     {
                         userData?.uuid === data.user_uuid && (
