@@ -22,17 +22,19 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
         reactions,
         //reactionsIsLoading,
         //reactionsIsError,
-        //reactionsMutate
+        reactionsMutate
     } = getCommentReactions(data?.uuid!)
 
     const handleReaction = async (reaction_type: string) => {
         if (reaction_type === "like") {
             const res = await likeComment({ comment_uuid: data.uuid! });
-            if (res?.status === true)
+            if (res?.status === true) {
                 toast({
                     title: "Bilgi",
                     description: res.message,
                 })
+                await reactionsMutate()
+            }
             else
                 toast({
                     title: "Bilgi",
@@ -40,11 +42,13 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
                 })
         } else {
             const res = await dislikeComment({ comment_uuid: data.uuid! });
-            if (res?.status === true)
+            if (res?.status === true) {
                 toast({
                     title: "Bilgi",
                     description: res.message,
                 })
+                await reactionsMutate()
+            }
             else
                 toast({
                     title: "Bilgi",
@@ -100,8 +104,6 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
                 <Divider />
                 <div className="w-full flex justify-start items-center gap-3">
                     <div className="flex justify-center items-center gap-1 cursor-pointer" onClick={() => handleReaction("like")}>
-                        <ChevronsUp className="text-green-500" />
-                        <span className="text-xs font-medium">{reactions?.like_count}</span>
                         {
                             likeCommentIsLoading ?
                                 <Loader2 className="animate-spin" />
