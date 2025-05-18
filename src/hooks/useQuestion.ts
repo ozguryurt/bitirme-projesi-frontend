@@ -86,13 +86,22 @@ const useQuestion = () => {
         (url, { arg }: { arg: { formData: FormData } }) => fetcherWithFormData(`${url}`, arg.formData)
     );
 
-    const {
+    /*const {
         trigger: editQuestion,
         isMutating: editQuestionIsLoading,
         error: editQuestionIsError
     } = useSWRMutation(
         `${import.meta.env.VITE_API}/question`,
         (url, { arg }: { arg: { question_uuid: string; Question: { Header: string; Content: string }; user_uuid: string } }) =>
+            fetcherPutBody(`${url}/${arg.question_uuid}/update`, arg)
+    );*/
+    const {
+        trigger: editQuestion,
+        isMutating: editQuestionIsLoading,
+        error: editQuestionIsError
+    } = useSWRMutation(
+        `${import.meta.env.VITE_API}/question`,
+        (url, { arg }: { arg: { question_uuid: string; Header: string; Content: string; user_uuid: string } }) =>
             fetcherPutBody(`${url}/${arg.question_uuid}/update`, arg)
     );
 

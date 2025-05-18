@@ -1,21 +1,8 @@
 import Divider from "@/components/custom/Divider"
 import { Link, useNavigate, useParams } from "react-router"
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import { Textarea } from "@/components/ui/textarea"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import questionReplySendSchema from "@/schemas/questionReplySendSchema"
 import { Button } from "@/components/ui/button"
 import CommentCard from "@/components/custom/CommentCard"
-import { Loader2, SquarePen, Trash } from "lucide-react"
+import { SquarePen, Trash } from "lucide-react"
 import useQuestion from "@/hooks/useQuestion"
 import { timeAgo } from "@/lib/timeAgo"
 import useModal from "@/hooks/useModal"
@@ -26,6 +13,7 @@ import { mutate } from "swr"
 import LoadingIcon from "@/components/custom/LoadingIcon"
 import { useToast } from "@/hooks/use-toast"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import QuestionReply from "@/components/custom/QuestionReply"
 
 const Question = () => {
 
@@ -35,48 +23,13 @@ const Question = () => {
     let navigate = useNavigate();
 
     const { questionId } = useParams<string>()
-    const { createComment, createCommentIsLoading, getQuestionByUUID, getQuestionCommentsByUUID, deleteQuestion, deleteQuestionIsLoading, deleteQuestionImages } = useQuestion()
+    const { getQuestionByUUID, getQuestionCommentsByUUID, deleteQuestion, deleteQuestionIsLoading, deleteQuestionImages } = useQuestion()
     const { question, questionIsLoading, questionIsError } = getQuestionByUUID(questionId!);
     const { comments, commentsIsLoading, commentsIsError, commentsMutate } = getQuestionCommentsByUUID(questionId!);
-
-    const form = useForm<z.infer<typeof questionReplySendSchema>>({
-        resolver: zodResolver(questionReplySendSchema),
-        defaultValues: {
-            comment: ""
-        },
-    })
 
     const renderPreview = () => {
         return { __html: marked(question?.content || "", { breaks: true }) };
     };
-
-    async function onSubmit(values: z.infer<typeof questionReplySendSchema>) {
-        try {
-            const formData_ = new FormData();
-            formData_.append('comment', values.comment);
-            formData_.append('user_uuid', userData?.uuid!);
-            const res = await createComment({ question_uuid: questionId!, formData: formData_ });
-            if (res?.status === true)
-                toast({
-                    title: "Bilgi",
-                    description: res.message,
-                })
-            else
-                toast({
-                    title: "Bilgi",
-                    description: res.message,
-                })
-        } catch (error) {
-            toast({
-                title: "Bilgi",
-                description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
-            })
-        }
-        finally {
-            form.reset()
-            commentsMutate()
-        }
-    }
 
     const handleDeleteQuestion = async () => {
         try {
@@ -144,9 +97,14 @@ const Question = () => {
                                     <p className="w-full truncate font-medium">
                                         {question?.User?.nickname}
                                     </p>
-                                    <p className="w-full truncate text-xs font-medium text-start">
-                                        {timeAgo(question?.CreatedAt!)}
-                                    </p>
+                                    <div className="flex justify-start items-center gap-2">
+                                        <p className="w-full truncate text-xs font-medium text-start">
+                                            {timeAgo(question?.CreatedAt!)}
+                                        </p>
+                                        <p className="w-full truncate text-xs font-medium text-start">
+                                            {question?.views_count} görüntülenme
+                                        </p>
+                                    </div>
                                 </div>
                             </Link>
                             <div
@@ -171,42 +129,10 @@ const Question = () => {
                                 </div>
                             }
                             <Divider />
-                            <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
-                                    <FormField
-                                        control={form.control}
-                                        name="comment"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    <p className="w-full font-bold text-2xl">
-                                                        Yorum yaz
-                                                    </p>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Textarea
-                                                        placeholder="Cevabınız..."
-                                                        className="resize-none"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <Button type="submit" disabled={createCommentIsLoading}>
-                                        {
-                                            createCommentIsLoading ? (
-                                                <>
-                                                    <Loader2 className="animate-spin" />
-                                                    Lütfen bekleyin
-                                                </>
-                                            ) : "Gönder"
-                                        }
-                                    </Button>
-                                </form>
-                            </Form>
-                            <Divider />
+                            {
+                                userData &&
+                                <QuestionReply userData={userData!} questionId={questionId!} />
+                            }
                             <p className="w-full font-bold text-2xl">
                                 Cevaplar ({comments !== null ? comments?.length : '0'})
                             </p>

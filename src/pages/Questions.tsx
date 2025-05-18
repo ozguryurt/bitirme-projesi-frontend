@@ -11,7 +11,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import useModal from "@/hooks/useModal"
-import { Plus } from "lucide-react"
+import { Filter, Plus } from "lucide-react"
 import QuestionFilter from "@/modals/QuestionFilter"
 import useFilterStore from "@/stores/filterStore"
 import useQuestion from "@/hooks/useQuestion"
@@ -89,7 +89,7 @@ const Questions = () => {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <Button onClick={handleFilterButton}>Filtrele</Button>
+                    <Button onClick={handleFilterButton}><Filter /> <span className="lg:block hidden">Filtrele</span></Button>
                     {
                         (filters.length > 0 || sortOrder !== "") &&
                         <>
@@ -97,10 +97,10 @@ const Questions = () => {
                         </>
                     }
                     {
-                        userData &&
+                        !userData &&
                         <>
                             <Button asChild>
-                                <Link to={`/new-question`}><Plus /> Yeni soru</Link>
+                                <Link to={`/new-question`}><Plus /> <span className="lg:block hidden">Yeni soru</span></Link>
                             </Button>
                             <AskAIButton mouseEffect={true} />
                         </>

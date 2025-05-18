@@ -12,4 +12,5 @@ export default interface QuestionType {
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt?: string | null;
+    views_count: number;
 }

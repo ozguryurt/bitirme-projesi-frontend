@@ -22,7 +22,7 @@ import { Loader2 } from "lucide-react"
 
 const Settings = () => {
 
-    const { userData } = useAuth()
+    const { userData, check } = useAuth()
     const { updateUser, updateUserIsLoading } = useUser()
     const { toast } = useToast()
 
@@ -71,6 +71,8 @@ const Settings = () => {
                 title: "Bilgi",
                 description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
             })
+        } finally {
+            await check()
         }
     }
 

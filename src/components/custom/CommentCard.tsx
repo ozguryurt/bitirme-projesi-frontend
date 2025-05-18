@@ -26,34 +26,36 @@ const CommentCard = ({ data, commentsMutateFn }: { data: CommentType, commentsMu
     } = getCommentReactions(data?.uuid!)
 
     const handleReaction = async (reaction_type: string) => {
-        if (reaction_type === "like") {
-            const res = await likeComment({ comment_uuid: data.uuid! });
-            if (res?.status === true) {
-                toast({
-                    title: "Bilgi",
-                    description: res.message,
-                })
-                await reactionsMutate()
+        if (userData) {
+            if (reaction_type === "like") {
+                const res = await likeComment({ comment_uuid: data.uuid! });
+                if (res?.status === true) {
+                    toast({
+                        title: "Bilgi",
+                        description: res.message,
+                    })
+                    await reactionsMutate()
+                }
+                else
+                    toast({
+                        title: "Bilgi",
+                        description: res.message,
+                    })
+            } else {
+                const res = await dislikeComment({ comment_uuid: data.uuid! });
+                if (res?.status === true) {
+                    toast({
+                        title: "Bilgi",
+                        description: res.message,
+                    })
+                    await reactionsMutate()
+                }
+                else
+                    toast({
+                        title: "Bilgi",
+                        description: res.message,
+                    })
             }
-            else
-                toast({
-                    title: "Bilgi",
-                    description: res.message,
-                })
-        } else {
-            const res = await dislikeComment({ comment_uuid: data.uuid! });
-            if (res?.status === true) {
-                toast({
-                    title: "Bilgi",
-                    description: res.message,
-                })
-                await reactionsMutate()
-            }
-            else
-                toast({
-                    title: "Bilgi",
-                    description: res.message,
-                })
         }
     }
 

@@ -28,8 +28,8 @@ const QuestionCard = ({ data }: { data: QuestionType }) => {
                         </p>
                     </div>
                 </div>
-                <div className="w-full truncate">
-                    <p className="font-bold text-xl">{data.header}</p>
+                <div className="w-full">
+                    <p className="font-bold text-xl truncate">{data.header}</p>
                 </div>
                 <Divider />
                 <div className="w-full flex flex-wrap gap-3">
