@@ -97,11 +97,11 @@ const Question = () => {
                                     <p className="w-full font-medium">
                                         {question?.User?.nickname}
                                     </p>
-                                    <div className="flex justify-start items-center gap-2">
-                                        <p className="w-full text-xs font-medium text-start">
+                                    <div className="w-full flex justify-start items-center gap-2">
+                                        <p className="text-xs font-medium text-start">
                                             {timeAgo(question?.CreatedAt!)}
                                         </p>
-                                        <p className="w-full text-xs font-medium text-start">
+                                        <p className="text-xs font-medium text-start">
                                             {question?.views_count} görüntülenme
                                         </p>
                                     </div>
