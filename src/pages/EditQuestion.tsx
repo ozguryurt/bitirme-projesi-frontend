@@ -53,10 +53,8 @@ const EditQuestion = () => {
             console.log(questionId, values.header, values.content, userData?.uuid!)
             const res = await editQuestion({
                 question_uuid: questionId!,
-                Question: {
-                    Header: values.header,
-                    Content: values.content
-                },
+                Header: values.header,
+                Content: values.content,
                 user_uuid: userData?.uuid!
             });
 
