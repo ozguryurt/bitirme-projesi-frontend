@@ -136,15 +136,6 @@ const Register = () => {
                                 </FormItem>
                             )}
                         />
-                        <div className="flex items-center space-x-2">
-                            <Checkbox id="terms" />
-                            <label
-                                htmlFor="terms"
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                                <Link to="/tos" className="text-blue-500">Kullanıcı Sözleşmesi</Link>'ni kabul ediyorum.
-                            </label>
-                        </div>
                         <Button type="submit" className="font-medium text-base text-white dark:text-zinc-800" disabled={registerIsLoading}>
                             {
                                 registerIsLoading ? (
