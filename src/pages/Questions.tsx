@@ -97,7 +97,7 @@ const Questions = () => {
                         </>
                     }
                     {
-                        !userData &&
+                        userData &&
                         <>
                             <Button asChild>
                                 <Link to={`/new-question`}><Plus /> <span className="lg:block hidden">Yeni soru</span></Link>
