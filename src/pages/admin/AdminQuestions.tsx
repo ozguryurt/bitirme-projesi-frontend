@@ -4,7 +4,7 @@ import LoadingPage from '@/components/custom/LoadingPage';
 
 // DataTable columns
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -18,10 +18,40 @@ import { DataTable } from '@/components/custom/DataTable';
 import QuestionType from '@/types/question/QuestionType';
 import { formatDate } from '@/lib/formatDate';
 import { Link } from 'react-router';
+import { useToast } from '@/hooks/use-toast';
+import useModal from '@/hooks/useModal';
+import { useAuth } from '@/providers/AuthProvider';
 
 const AdminQuestions = () => {
-    const { getQuestions } = useAdmin()
-    const { questions, questionsIsLoading, questionsIsError } = getQuestions()
+    const { userData } = useAuth()
+    const { getQuestions, deleteQuestion, deleteQuestionIsLoading } = useAdmin()
+    const { questions, questionsIsLoading, questionsIsError, questionsMutate } = getQuestions()
+    const { showYesNoModal } = useModal()
+    const { toast } = useToast()
+
+    const handleDeleteQuestion = async (question_uuid: string) => {
+        try {
+            showYesNoModal({
+                text: "Soruyu silmek istediğinize emin misiniz?",
+                disabledStatus: deleteQuestionIsLoading,
+                yesBtnFn: async () => {
+                    const res = await deleteQuestion({ question_uuid: question_uuid, user_uuid: userData?.uuid! });
+                    if (res?.status === true) {
+                        toast({
+                            title: "Bilgi",
+                            description: res.message,
+                        })
+                        await questionsMutate()
+                    }
+                }
+            })
+        } catch (error) {
+            toast({
+                title: "Bilgi",
+                description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
+            })
+        }
+    }
 
     const columns: ColumnDef<QuestionType>[] = [
         {
@@ -61,6 +91,11 @@ const AdminQuestions = () => {
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 <Link to={`/profile/${question.User.uuid}`}>Kullanıcıyı görüntüle</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Button variant={'destructive'} onClick={() => handleDeleteQuestion(question.uuid)}>
+                                    <Trash /> Soruyu sil
+                                </Button>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

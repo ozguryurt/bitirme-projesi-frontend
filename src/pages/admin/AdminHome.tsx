@@ -88,30 +88,12 @@ const AdminHome = () => {
           <div className="w-full rounded-md p-3 border space-y-5">
             <div className="pb-2">
               <div className="font-semibold leading-none tracking-tight">Son üyeler</div>
-              <div className="text-sm text-muted-foreground">Bu ay&nbsp;
-                {
-                  users
-                    ?.filter((user: UserType) => {
-                      const currentDate = new Date();
-                      const currentMonth = currentDate.getMonth();
-
-                      const userCreatedAt = new Date(user.CreatedAt!);
-                      return userCreatedAt.getMonth() === currentMonth;
-                    }).length
-                }
-                &nbsp;yeni üye katıldı.</div>
+              <div className="text-sm text-muted-foreground">Son kayıt olan üyeler.</div>
             </div>
             {
               usersIsError ? <>Bir hata meydana geldi.</> :
                 usersIsLoading ? <LoadingIcon /> : users ? users
-                  ?.filter((user: UserType) => {
-                    const currentDate = new Date();
-                    const currentMonth = currentDate.getMonth();
-
-                    const userCreatedAt = new Date(user.CreatedAt!);
-                    return userCreatedAt.getMonth() === currentMonth;
-                  })
-                  .slice(0, 5)
+                  ?.slice(0, 5)
                   .map((user: UserType) => {
                     return (
                       <HomeUserCard

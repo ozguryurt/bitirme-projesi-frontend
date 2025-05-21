@@ -19,37 +19,36 @@ import { Link } from 'react-router';
 import useQuestion from '@/hooks/useQuestion';
 import useModal from '@/hooks/useModal';
 import LoadingIcon from '@/components/custom/LoadingIcon';
+import { useToast } from "@/hooks/use-toast";
 
 const MyQuestions = () => {
     const { userData } = useAuth()
     const { getUserQuestions } = useUser();
     const { questions, questionsIsLoading, questionsIsError, questionsMutate } = getUserQuestions(userData?.uuid!)
     const { deleteQuestion, deleteQuestionIsLoading } = useQuestion()
-    const { showModal, showYesNoModal } = useModal()
+    const { showYesNoModal } = useModal()
+    const { toast } = useToast()
 
     const handleDeleteQuestion = async (questionId: string) => {
         try {
-
             showYesNoModal({
                 text: "Soruyu silmek istediğinize emin misiniz?",
                 disabledStatus: deleteQuestionIsLoading,
                 yesBtnFn: async () => {
                     const res = await deleteQuestion({ question_uuid: questionId!, user_uuid: userData?.uuid! });
                     if (res?.status === true) {
-                        showModal({
-                            title: "Başarılı",
+                        toast({
+                            title: "Bilgi",
                             description: res.message,
-                            body: ""
                         })
                         await questionsMutate()
                     }
                 }
             })
         } catch (error) {
-            showModal({
-                title: "Başarısız",
+            toast({
+                title: "Bilgi",
                 description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
-                body: ""
             })
         }
     }

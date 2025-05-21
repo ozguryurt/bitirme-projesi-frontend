@@ -3,7 +3,7 @@ import LoadingPage from '@/components/custom/LoadingPage';
 
 // DataTable columns
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -17,10 +17,39 @@ import { DataTable } from '@/components/custom/DataTable';
 import UserType from '@/types/UserType';
 import { useAdmin } from '@/hooks/admin/useAdmin';
 import { Link } from 'react-router';
+import useModal from '@/hooks/useModal';
+import { useToast } from '@/hooks/use-toast';
 
 const AdminUsers = () => {
-    const { getUsers } = useAdmin()
-    const { users, usersIsLoading, usersIsError } = getUsers()
+    const { getUsers, deleteUser, deleteUserIsLoading } = useAdmin()
+    const { users, usersIsLoading, usersIsError, usersMutate } = getUsers()
+    const { showYesNoModal } = useModal()
+    const { toast } = useToast()
+
+    const handleDeleteUser = async (user_uuid: string) => {
+        try {
+            showYesNoModal({
+                text: "Kullanıcıyı silmek istediğinize emin misiniz?",
+                disabledStatus: deleteUserIsLoading,
+                yesBtnFn: async () => {
+                    const res = await deleteUser({ user_uuid: user_uuid });
+                    if (res?.status === true) {
+                        toast({
+                            title: "Bilgi",
+                            description: res.message,
+                        })
+                        await usersMutate()
+                    }
+                }
+            })
+        } catch (error) {
+            toast({
+                title: "Bilgi",
+                description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
+            })
+        }
+    }
+
 
     const columns: ColumnDef<UserType>[] = [
         {
@@ -54,6 +83,11 @@ const AdminUsers = () => {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem>
                                 <Link to={`/profile/${user.uuid}`}>Kullanıcıyı görüntüle</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Button variant={'destructive'} onClick={() => handleDeleteUser(user.uuid)}>
+                                    <Trash /> Kullanıcıyı sil
+                                </Button>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
