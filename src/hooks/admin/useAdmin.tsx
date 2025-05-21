@@ -43,7 +43,7 @@ export const useAdmin = () => {
         questionsIsError: any;
         questionsMutate: () => void;
     } => {
-        const { data, error, isLoading, mutate } = useSWR<{ data: QuestionType[] }>(`${import.meta.env.VITE_API}/question`, fetcher);
+        const { data, error, isLoading, mutate } = useSWR<{ data: QuestionType[] }>(`${import.meta.env.VITE_API}/question/questions`, fetcher);
 
         return {
             questions: data ? data.data : [],
