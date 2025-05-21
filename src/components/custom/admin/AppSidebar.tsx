@@ -64,10 +64,9 @@ export function AppSidebar() {
                 className="w-[--radix-popper-anchor-width]"
               >
                 <DropdownMenuItem>
-                  <span>Ayarlar</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Çıkış yap</span>
+                  <Link to={`/`}>
+                    <span>Geri dön</span>
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
