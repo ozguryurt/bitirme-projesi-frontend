@@ -146,15 +146,20 @@ const Header = () => {
                                         tab === 0 &&
                                         <DropdownMenuContent className="w-56">
                                             <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuGroup>
-                                                <DropdownMenuItem>
-                                                    <UserRoundCog />
-                                                    <Link to={`/admin/dashboard`} onClick={() => setOpen(false)}>
-                                                        Admin panel
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuGroup>
+                                            {
+                                                userData.role === "admin" &&
+                                                <>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuGroup>
+                                                        <DropdownMenuItem>
+                                                            <UserRoundCog />
+                                                            <Link to={`/admin/dashboard`} onClick={() => setOpen(false)}>
+                                                                Admin panel
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuGroup>
+                                                </>
+                                            }
                                             <DropdownMenuSeparator />
                                             <DropdownMenuGroup>
                                                 <DropdownMenuItem>
