@@ -75,6 +75,8 @@ const NewQuestion = () => {
                     description: res.message,
                 })
                 navigate("/questions")
+                newQuestionForm.reset();
+                setImages([])
             }
             else {
                 toast({
@@ -82,8 +84,6 @@ const NewQuestion = () => {
                     description: res.message,
                 })
             }
-            newQuestionForm.reset();
-            setImages([])
         } catch (error) {
             toast({
                 title: "Bilgi",
@@ -169,6 +169,7 @@ const NewQuestion = () => {
                                         <FormControl>
                                             <MultiSelect
                                                 options={frameworksList}
+                                                value={field.value}
                                                 onValueChange={(value) => field.onChange(value)}
                                                 defaultValue={field.value}
                                                 placeholder="Kategori seçin"

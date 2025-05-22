@@ -102,6 +102,7 @@ const MarkdownEditor = ({ placeholder, defaultValue, onValueChange }: { placehol
             {!previewMode ? (
                 <Textarea
                     id="body"
+                    name="content"
                     value={markdownText}
                     onChange={(e) => {
                         setMarkdownText(e.target.value)
