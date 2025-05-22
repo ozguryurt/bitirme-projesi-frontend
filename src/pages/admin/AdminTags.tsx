@@ -1,10 +1,9 @@
-import { useAdmin } from '@/hooks/admin/useAdmin';
 import ErrorPage from '@/components/custom/ErrorPage';
 import LoadingPage from '@/components/custom/LoadingPage';
 
 // DataTable columns
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Trash } from "lucide-react";
+import { MoreHorizontal, Plus, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -15,33 +14,39 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTable } from '@/components/custom/DataTable';
-import QuestionType from '@/types/question/QuestionType';
-import { formatDate } from '@/lib/formatDate';
-import { Link } from 'react-router';
-import { useToast } from '@/hooks/use-toast';
+import { useAdmin } from '@/hooks/admin/useAdmin';
 import useModal from '@/hooks/useModal';
-import { useAuth } from '@/providers/AuthProvider';
+import { useToast } from '@/hooks/use-toast';
+import QuestionTagType from '@/types/question/QuestionTagType';
+import CreateTag from '@/modals/CreateTag';
 
-const AdminQuestions = () => {
-    const { userData } = useAuth()
-    const { getQuestions, deleteQuestion, deleteQuestionIsLoading } = useAdmin()
-    const { questions, questionsIsLoading, questionsIsError, questionsMutate } = getQuestions()
-    const { showYesNoModal } = useModal()
+const AdminTags = () => {
+    const { getTags, deleteTag, deleteTagIsLoading } = useAdmin()
+    const { tags, tagsIsLoading, tagsIsError, tagsMutate } = getTags()
+    const { showModal, showYesNoModal } = useModal()
     const { toast } = useToast()
 
-    const handleDeleteQuestion = async (question_uuid: string) => {
+    const handleNewTagButton = () => {
+        showModal({
+            title: "Yeni tag oluştur",
+            description: "",
+            body: <CreateTag mutateFn={tagsMutate} />
+        })
+    }
+
+    const handleDeleteTag = async (tagUuid: string) => {
         try {
             showYesNoModal({
-                text: "Soruyu silmek istediğinize emin misiniz?",
-                disabledStatus: deleteQuestionIsLoading,
+                text: "Tagı silmek istediğinize emin misiniz?",
+                disabledStatus: deleteTagIsLoading,
                 yesBtnFn: async () => {
-                    const res = await deleteQuestion({ question_uuid: question_uuid, user_uuid: userData?.uuid! });
+                    const res = await deleteTag({ tag_uuid: tagUuid });
                     if (res?.status === true) {
                         toast({
                             title: "Bilgi",
                             description: res.message,
                         })
-                        await questionsMutate()
+                        await tagsMutate()
                     }
                 }
             })
@@ -53,27 +58,21 @@ const AdminQuestions = () => {
         }
     }
 
-    const columns: ColumnDef<QuestionType>[] = [
+
+    const columns: ColumnDef<QuestionTagType>[] = [
         {
             accessorKey: "uuid",
             header: "UUID",
         },
         {
-            accessorKey: "CreatedAt",
-            header: "Oluşturma",
-            cell: ({ row }) => {
-                return <>{formatDate(row.original.CreatedAt)}</>
-            },
-        },
-        {
-            accessorKey: "User.nickname",
-            header: "Soran",
+            accessorKey: "name",
+            header: "İsim",
         },
         {
             id: "actions",
             header: "İşlem",
             cell: ({ row }) => {
-                const question = row.original;
+                const tag = row.original;
 
                 return (
                     <DropdownMenu>
@@ -87,14 +86,8 @@ const AdminQuestions = () => {
                             <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem>
-                                <Link to={`/question/${question.uuid}`}>Soruya git</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Link to={`/profile/${question.User.uuid}`}>Kullanıcıyı görüntüle</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Button variant={'destructive'} onClick={() => handleDeleteQuestion(question.uuid)}>
-                                    <Trash /> Soruyu sil
+                                <Button variant={'destructive'} onClick={() => handleDeleteTag(tag.uuid)}>
+                                    <Trash /> Tagı sil
                                 </Button>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -104,15 +97,24 @@ const AdminQuestions = () => {
         },
     ];
 
-    if (questionsIsError) return <ErrorPage />;
+    if (tagsIsError) return <ErrorPage />;
 
-    if (questionsIsLoading) return <LoadingPage />;
+    if (tagsIsLoading) return <LoadingPage />;
 
     return (
         <div className="w-full min-h-screen flex flex-col justify-center items-center gap-3 px-5 lg:px-24 py-5">
-            <DataTable columns={columns} data={questions!} itemPerPage={7} />
+            <div className="w-full flex justify-start items-center">
+                <Button onClick={handleNewTagButton}><Plus /> Yeni tag</Button>
+            </div>
+            <DataTable
+                columns={columns}
+                data={tags}
+                itemPerPage={7}
+                filterColumn="name"
+                filterPlaceholder="İsme göre ara..."
+            />
         </div>
     );
 };
 
-export default AdminQuestions;
+export default AdminTags;

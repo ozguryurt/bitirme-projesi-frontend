@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { ChevronUp, Home, ShieldQuestion, User } from "lucide-react"
+import { ChevronUp, Filter, Home, ShieldQuestion, User } from "lucide-react"
 import { Link } from "react-router"
 
 export function AppSidebar() {
@@ -42,6 +42,14 @@ export function AppSidebar() {
                   <Link to={`/admin/questions`}>
                     <ShieldQuestion />
                     <span className="font-medium">Sorular</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={`/admin/tags`}>
+                    <Filter />
+                    <span className="font-medium">Tag listesi</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

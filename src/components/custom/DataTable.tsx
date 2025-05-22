@@ -3,6 +3,8 @@ import {
     getCoreRowModel,
     useReactTable,
     getPaginationRowModel,
+    getFilteredRowModel,
+    ColumnFiltersState,
 } from "@tanstack/react-table";
 
 import {
@@ -16,35 +18,62 @@ import {
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
-    itemPerPage: number
+    itemPerPage: number;
+    filterColumn?: string; // Filtrelenecek sütun adı
+    filterPlaceholder?: string; // Input placeholder
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
-    itemPerPage = 5
+    itemPerPage = 5,
+    filterColumn,
+    filterPlaceholder = "Ara..."
 }: DataTableProps<TData, TValue>) {
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
     const table = useReactTable({
         initialState: {
             pagination: {
-                pageSize: itemPerPage, // Başlangıç sayfa boyutu
+                pageSize: itemPerPage,
             },
         },
         data,
         columns,
+        onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        state: {
+            columnFilters,
+        },
     });
 
-    const currentPage = table.getState().pagination.pageIndex + 1; // Mevcut sayfa (1 tabanlı)
-    const totalPages = table.getPageCount(); // Toplam sayfa sayısı
+    const currentPage = table.getState().pagination.pageIndex + 1;
+    const totalPages = table.getPageCount();
 
     return (
         <div className="w-full">
+            {/* Filtreleme Input'u */}
+            {filterColumn && (
+                <div className="flex items-center pb-3">
+                    <Input
+                        placeholder={filterPlaceholder}
+                        value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                            table.getColumn(filterColumn)?.setFilterValue(event.target.value)
+                        }
+                        className="max-w-sm"
+                    />
+                </div>
+            )}
+
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -56,9 +85,9 @@ export function DataTable<TData, TValue>({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef.header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     );
                                 })}
@@ -82,7 +111,7 @@ export function DataTable<TData, TValue>({
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
+                                    Kayıt bulunamadı.
                                 </TableCell>
                             </TableRow>
                         )}

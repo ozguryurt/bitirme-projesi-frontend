@@ -93,7 +93,7 @@ const AdminHome = () => {
             {
               usersIsError ? <>Bir hata meydana geldi.</> :
                 usersIsLoading ? <LoadingIcon /> : users ? users
-                  ?.slice(0, 5)
+                  ?.slice(0, 3)
                   .map((user: UserType) => {
                     return (
                       <HomeUserCard
@@ -103,7 +103,9 @@ const AdminHome = () => {
                         email={user.email}
                       />
                     );
-                  }) : <p className="text-center">Kullanıcı bulunamadı.</p>
+                  })
+                  :
+                  <p className="text-center">Kullanıcı bulunamadı.</p>
             }
           </div>
         </div>

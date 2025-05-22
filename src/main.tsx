@@ -27,6 +27,7 @@ import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import useAuthStore from './stores/authStore';
 import AskAI from './pages/AskAI';
+import AdminTags from './pages/admin/AdminTags';
 
 // Özel rota: Kullanıcı giriş yapmadıysa login sayfasına yönlendir
 const UnprivateRoute = ({ element }: { element: JSX.Element }) => {
@@ -72,6 +73,7 @@ createRoot(document.getElementById('root')!).render(
           <Route element={<DashboardLayout />}>
             <Route path="dashboard" element={<AdminRoute element={<AdminHome />} />} />
             <Route path="users" element={<AdminRoute element={<AdminUsers />} />} />
+            <Route path="tags" element={<AdminRoute element={<AdminTags />} />} />
             <Route path="questions" element={<AdminRoute element={<AdminQuestions />} />} />
           </Route>
           <Route path="login" element={<AdminLogin />} />

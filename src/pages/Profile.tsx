@@ -143,13 +143,13 @@ const Profile: React.FC = () => {
               </div>
               <Divider />
               <div className="w-full flex flex-col justify-center items-center gap-3">
-                <p className="text-center font-bold text-xl">@{user.nickname} soruları</p>
+                <p className="text-center font-bold text-xl">@{user.nickname} son soruları</p>
                 {
                   questionsIsError ? <>Bir hata meydana geldi.</> :
                     questionsIsLoading ? <LoadingIcon /> : questions ?
                       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-2">
                         {
-                          questions.slice(0, 3).map((question, index) => {
+                          questions.slice(0, 2).map((question, index) => {
                             return (
                               <QuestionCard
                                 key={index}

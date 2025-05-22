@@ -1,5 +1,7 @@
 import { fetcher } from '@/lib/fetcher';
 import { fetcherDelete } from '@/lib/fetcherDelete';
+import { fetcherWithBody } from '@/lib/fetcherWithBody';
+import QuestionTagType from '@/types/question/QuestionTagType';
 import QuestionType from '@/types/question/QuestionType';
 import UserType from '@/types/UserType';
 import useSWR from 'swr';
@@ -63,6 +65,15 @@ export const useAdmin = () => {
     );
 
     const {
+        trigger: deleteTag,
+        isMutating: deleteTagIsLoading,
+        error: deleteTagIsError,
+    } = useSWRMutation(
+        `${import.meta.env.VITE_API}/admin`,  // url
+        (url, { arg }: { arg: { tag_uuid: string } }) => fetcherDelete(`${url}/${arg.tag_uuid}/delete-tag`, arg)
+    );
+
+    const {
         trigger: deleteQuestion,
         isMutating: deleteQuestionIsLoading,
         error: deleteQuestionIsError,
@@ -93,6 +104,31 @@ export const useAdmin = () => {
         }
     }
 
+    const getTags = (): {
+        tags: QuestionTagType[] | [];
+        tagsIsLoading: boolean;
+        tagsIsError: any;
+        tagsMutate: () => void;
+    } => {
+        const { data, error, isLoading, mutate } = useSWR<any>(`${import.meta.env.VITE_API}/tags`, fetcher)
+
+        return {
+            tags: data ? data.data : null,
+            tagsIsLoading: isLoading,
+            tagsIsError: error,
+            tagsMutate: mutate
+        };
+    };
+
+    const {
+        trigger: createTag,
+        isMutating: createTagIsLoading,
+        error: createTagIsError
+    } = useSWRMutation(
+        `${import.meta.env.VITE_API}/admin/add-tag`, // URL
+        (url, { arg }: { arg: { name: string } }) => fetcherWithBody(`${url}`, { arg })
+    );
+
     return {
         getUsers,
         getQuestions,
@@ -105,6 +141,16 @@ export const useAdmin = () => {
         deleteQuestion,
         deleteQuestionIsLoading,
         deleteQuestionIsError,
-        deleteQuestionImages
+        deleteQuestionImages,
+
+        getTags,
+
+        createTag,
+        createTagIsLoading,
+        createTagIsError,
+
+        deleteTag,
+        deleteTagIsLoading,
+        deleteTagIsError
     };
 };
