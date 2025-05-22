@@ -1,7 +1,9 @@
 export const timeAgo = (isoDate: string): string => {
     const date = new Date(isoDate);
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    let diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 0) diffInSeconds = 0;
 
     if (diffInSeconds < 3600) {
         return Math.floor(diffInSeconds / 60) === 0 ? "Az önce" : `${Math.floor(diffInSeconds / 60)} dakika önce`;

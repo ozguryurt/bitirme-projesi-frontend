@@ -47,14 +47,13 @@ const QuestionReply = ({ userData, questionId }: { userData: UserType, questionI
                     title: "Bilgi",
                     description: res.message,
                 })
+            form.reset()
         } catch (error) {
             toast({
                 title: "Bilgi",
                 description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
             })
-        }
-        finally {
-            form.reset()
+        } finally {
             commentsMutate()
         }
     }

@@ -71,13 +71,12 @@ const EditQuestion = () => {
                     description: res.message,
                 })
             }
+            newQuestionForm.reset();
         } catch (error) {
             toast({
                 title: "Bilgi",
                 description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
             })
-        } finally {
-            newQuestionForm.reset();
         }
     };
 

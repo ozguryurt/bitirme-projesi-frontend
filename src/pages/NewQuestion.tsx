@@ -82,14 +82,13 @@ const NewQuestion = () => {
                     description: res.message,
                 })
             }
+            newQuestionForm.reset();
+            setImages([])
         } catch (error) {
             toast({
                 title: "Bilgi",
                 description: "Bir hata meydana geldi, daha sonra tekrar deneyin.",
             })
-        } finally {
-            newQuestionForm.reset();
-            setImages([])
         }
     };
 
