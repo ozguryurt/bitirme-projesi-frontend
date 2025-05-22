@@ -7,22 +7,16 @@ import { Info, SendIcon } from "lucide-react"
 import { useAuth } from "@/providers/AuthProvider"
 import useModal from "@/hooks/useModal"
 import useQuestion from "@/hooks/useQuestion"
-import { formatDate } from "@/lib/formatDate"
-
-type Message = {
-    id: string,
-    content: string,
-    role: "user" | "assistant",
-    timestamp: Date
-}
+import MessageBox from "@/components/custom/MessageBox"
+import MessageAIType from "@/types/MessageAIType"
 
 const AskAI = () => {
 
     const { userData } = useAuth()
     const { showModal } = useModal()
-    const { askAI, askAIIsLoading, askAIIsError } = useQuestion()
+    const { askAI, askAIIsLoading } = useQuestion()
 
-    const [messages, setMessages] = useState<Message[]>([])
+    const [messages, setMessages] = useState<MessageAIType[]>([])
     const [input, setInput] = useState("")
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -30,17 +24,50 @@ const AskAI = () => {
         e.preventDefault()
         if (!input.trim()) return
 
+        const userMessage = {
+            id: Date.now().toString(), // Dinamik ID
+            content: input,
+            role: "user" as const,
+            timestamp: new Date(),
+            status: "loaded" as const
+        }
+
+        const loadingMessage = {
+            id: (Date.now() + 1).toString(), // Benzersiz ID
+            content: "",
+            role: "assistant" as const,
+            timestamp: new Date(),
+            status: "loading" as const
+        }
+
+        // Input'u temizle
         setInput("")
 
+        // Kullanıcı mesajını ekle
+        setMessages((prev) => [...prev, userMessage])
+
+        // Loading mesajını ekle
+        setMessages((prev) => [...prev, loadingMessage])
+
         try {
-            const res = await askAI({ question: input })
-            setMessages((prev) => [...prev, res.user])
-            setMessages((prev) => [...prev, res.assistant])
+            const res = await askAI({ question: userMessage.content })
+
+            // Loading mesajını kaldır ve gerçek cevabı ekle
+            setMessages((prev) => {
+                const withoutLoading = prev.filter(msg => msg.id !== loadingMessage.id)
+                return [...withoutLoading, res.assistant]
+            })
         } catch (err) {
-            showModal({
-                title: "Başarısız",
-                description: "Bir hata meydana geldi.",
-                body: ""
+            // Loading mesajını kaldır ve hata mesajını ekle
+            setMessages((prev) => {
+                const withoutLoading = prev.filter(msg => msg.id !== loadingMessage.id)
+                return [...withoutLoading, {
+                    id: Date.now().toString(),
+                    content: "Üzgünüm, şu anda size cevap veremiyorum.",
+                    role: "assistant" as const,
+                    timestamp: new Date(),
+                    status: "error" as const
+                }]
             })
         }
     }
@@ -77,72 +104,13 @@ const AskAI = () => {
                             <p className="font-medium text-base text-center">Nasıl yardımcı olabilirim?</p>
                         </div>
                     }
-                    {messages.map((message) => (
-                        <>
-                            <div key={message.id} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                                {message.role === "assistant" && (
-                                    <Avatar className="h-12 w-12">
-                                        <AvatarImage src="/aiavatar.png" />
-                                        <AvatarFallback>StackAI</AvatarFallback>
-                                    </Avatar>
-                                )}
-                                <div className={`flex flex-col gap-1 ${message.role === "user" ? "items-end" : "items-start"}`}>
-                                    <div
-                                        className={`rounded-lg px-4 py-2 whitespace-pre-line ${message.role === "user"
-                                            ? "bg-primary text-primary-foreground"
-                                            : "bg-muted"
-                                            }`}
-                                    >
-                                        {message.content}
-                                    </div>
-                                    <span className="text-xs opacity-70 mt-1 text-right">
-                                        {formatDate(message.timestamp.toString())}
-                                    </span>
-                                </div>
-                                {message.role === "user" && (
-                                    <Avatar className="h-12 w-12">
-                                        <AvatarImage src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${userData?.avatar}`} />
-                                        <AvatarFallback>{userData?.nickname}</AvatarFallback>
-                                    </Avatar>
-                                )}
-                            </div>
-                        </>
-                    ))}
-                    {askAIIsError ? <></> :
-                        askAIIsLoading && (
+                    {
+                        messages.map((message) => (
                             <>
-                                <div className={`flex gap-3 justify-end`}>
-                                    <div className={`flex flex-col gap-1 items-end`}>
-                                        <div className={`rounded-lg px-4 py-2 bg-primary`}>
-                                            <div className="flex space-x-2">
-                                                <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"></div>
-                                                <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-75"></div>
-                                                <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-150"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <Avatar className="h-12 w-12">
-                                        <AvatarImage src={`${import.meta.env.VITE_IMAGE_BASEPATH}/${userData?.avatar}`} />
-                                        <AvatarFallback>{userData?.nickname}</AvatarFallback>
-                                    </Avatar>
-                                </div>
-                                <div className="flex gap-3 justify-start">
-                                    <Avatar className="h-12 w-12">
-                                        <AvatarImage src="/aiavatar.png" />
-                                        <AvatarFallback>StackAI</AvatarFallback>
-                                    </Avatar>
-                                    <div className={`flex flex-col gap-1 items-start`}>
-                                        <div className={`rounded-lg px-4 py-2 bg-muted`}>
-                                            <div className="flex space-x-2">
-                                                <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"></div>
-                                                <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-75"></div>
-                                                <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-150"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <MessageBox key={message.id} message={message} userData={userData!} />
                             </>
-                        )}
+                        ))
+                    }
                     <div ref={messagesEndRef} />
                 </div>
             </ScrollArea>
