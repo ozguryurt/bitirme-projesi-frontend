@@ -7,6 +7,23 @@ import UserType from '@/types/UserType';
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 
+
+type SixMonthsApiResponse = {
+    [key: string]: [number, number]; // Örn: "2025-01": [soru, cevap]
+};
+
+type QuestionAnswerItem = {
+    ay: string;
+    sorular: number;
+    cevaplar: number;
+};
+
+type QuestionAnswerResponse = {
+    questionAnswersData: QuestionAnswerItem[] | null;
+    questionAnswersDataIsLoading: boolean;
+    questionAnswersDataIsError: any;
+};
+
 export const useAdmin = () => {
 
     const getStatistics = (): {
@@ -22,6 +39,45 @@ export const useAdmin = () => {
             statisticsIsError: error,
         };
     };
+
+    const getQuestionsAnswersData = (): QuestionAnswerResponse => {
+        const { data, error, isLoading } = useSWR<{ data: SixMonthsApiResponse }>(
+            `${import.meta.env.VITE_API}/admin/six-months-data`,
+            fetcher
+        );
+
+        const ayIsimleri: Record<string, string> = {
+            "01": "Ocak",
+            "02": "Şubat",
+            "03": "Mart",
+            "04": "Nisan",
+            "05": "Mayıs",
+            "06": "Haziran",
+            "07": "Temmuz",
+            "08": "Ağustos",
+            "09": "Eylül",
+            "10": "Ekim",
+            "11": "Kasım",
+            "12": "Aralık",
+        };
+
+        const formattedData: QuestionAnswerItem[] | null = data?.data
+            ? Object.entries(data.data).map(([key, value]) => {
+                const [, ay] = key.split("-");
+                return {
+                    ay: ayIsimleri[ay] || key,
+                    sorular: value[0],
+                    cevaplar: value[1],
+                };
+            })
+            : null;
+
+        return {
+            questionAnswersData: formattedData,
+            questionAnswersDataIsLoading: isLoading,
+            questionAnswersDataIsError: error,
+        };
+    }
 
     const getUsers = (): {
         users: UserType[] | [];
@@ -133,6 +189,7 @@ export const useAdmin = () => {
         getUsers,
         getQuestions,
         getStatistics,
+        getQuestionsAnswersData,
 
         deleteUser,
         deleteUserIsLoading,

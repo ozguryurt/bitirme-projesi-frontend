@@ -10,14 +10,14 @@ import { useAdmin } from "@/hooks/admin/useAdmin"
 import UserType from "@/types/UserType"
 import LoadingIcon from "@/components/custom/LoadingIcon"
 
-const chartData = [
+/*const chartData = [
   { ay: "Ocak", sorular: 186, cevaplar: 80 },
   { ay: "Şubat", sorular: 305, cevaplar: 200 },
   { ay: "Mart", sorular: 237, cevaplar: 120 },
   { ay: "Nisan", sorular: 73, cevaplar: 190 },
   { ay: "Mayıs", sorular: 209, cevaplar: 130 },
   { ay: "Haziran", sorular: 214, cevaplar: 140 },
-]
+]*/
 
 const chartConfig = {
   sorular: {
@@ -32,9 +32,10 @@ const chartConfig = {
 
 const AdminHome = () => {
 
-  const { getUsers, getStatistics } = useAdmin()
+  const { getUsers, getStatistics, getQuestionsAnswersData } = useAdmin()
   const { users, usersIsLoading, usersIsError } = getUsers()
   const { statistics, statisticsIsLoading, statisticsIsError } = getStatistics()
+  const { questionAnswersData, questionAnswersDataIsLoading, questionAnswersDataIsError } = getQuestionsAnswersData()
 
   return (
     <div className="w-full flex flex-col justify-center items-center gap-12 px-5 lg:px-24 py-5">
@@ -67,22 +68,29 @@ const AdminHome = () => {
       </div>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="w-full bg-card text-card-foreground">
-          <ChartContainer config={chartConfig} className="h-full w-full">
-            <BarChart accessibilityLayer data={chartData}>
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="ay"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                tickFormatter={(value) => value.slice(0, 3)}
-              />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <ChartLegend content={<ChartLegendContent />} />
-              <Bar dataKey="sorular" fill="var(--color-sorular)" radius={4} />
-              <Bar dataKey="cevaplar" fill="var(--color-cevaplar)" radius={4} />
-            </BarChart>
-          </ChartContainer>
+          {
+            questionAnswersDataIsError ? <>Bir hata meydana geldi.</> :
+              questionAnswersDataIsLoading ? <LoadingIcon /> : (
+                <>
+                  <ChartContainer config={chartConfig} className="h-full w-full">
+                    <BarChart accessibilityLayer data={questionAnswersData!}>
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="ay"
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                        tickFormatter={(value) => value.slice(0, 3)}
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <ChartLegend content={<ChartLegendContent />} />
+                      <Bar dataKey="sorular" fill="var(--color-sorular)" radius={4} />
+                      <Bar dataKey="cevaplar" fill="var(--color-cevaplar)" radius={4} />
+                    </BarChart>
+                  </ChartContainer>
+                </>
+              )
+          }
         </div>
         <div className="w-full bg-card text-card-foreground">
           <div className="w-full rounded-md p-3 border space-y-5">
