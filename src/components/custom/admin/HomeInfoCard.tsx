@@ -1,6 +1,6 @@
 import React from 'react'
 
-const HomeInfoCard = ({ title, icon: Icon, count, subtitle }: { title: string, icon: React.ComponentType<any>, count: string, subtitle: string }) => {
+const HomeInfoCard = ({ title, icon: Icon, count }: { title: string, icon: React.ComponentType<any>, count: string }) => {
     return (
         <div className="rounded-md p-3 border">
             <div className="flex justify-between items-center pb-2">
@@ -11,9 +11,6 @@ const HomeInfoCard = ({ title, icon: Icon, count, subtitle }: { title: string, i
             </div>
             <div className="text-3xl font-bold">
                 {count}
-            </div>
-            <div className="text-xs text-muted-foreground">
-                {subtitle}
             </div>
         </div>
     )

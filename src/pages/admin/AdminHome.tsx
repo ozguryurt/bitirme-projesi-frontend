@@ -48,19 +48,16 @@ const AdminHome = () => {
                   title={`Kullanıcılar`}
                   icon={Users}
                   count={statistics['Kullanıcı Adedi']}
-                  subtitle={`Son 1 ayda %20.1 artış`}
                 />
                 <HomeInfoCard
                   title={`Sorular`}
                   icon={ShieldQuestion}
                   count={statistics['Soru Adedi']}
-                  subtitle={`Son 1 ayda %20.1 artış`}
                 />
                 <HomeInfoCard
                   title={`Cevaplar`}
                   icon={Reply}
                   count={statistics['Yorum Adedi']}
-                  subtitle={`Son 1 ayda %20.1 artış`}
                 />
               </>
             )
