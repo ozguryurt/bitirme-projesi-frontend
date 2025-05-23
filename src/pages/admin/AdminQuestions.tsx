@@ -110,7 +110,12 @@ const AdminQuestions = () => {
 
     return (
         <div className="w-full min-h-screen flex flex-col justify-center items-center gap-3 px-5 lg:px-24 py-5">
-            <DataTable columns={columns} data={questions!} itemPerPage={7} />
+            {
+                questions ?
+                    <DataTable columns={columns} data={questions} itemPerPage={7} />
+                    :
+                    <>Kayıt bulunamadı.</>
+            }
         </div>
     );
 };

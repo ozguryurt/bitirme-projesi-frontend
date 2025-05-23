@@ -106,13 +106,18 @@ const AdminTags = () => {
             <div className="w-full flex justify-start items-center">
                 <Button onClick={handleNewTagButton}><Plus /> Yeni tag</Button>
             </div>
-            <DataTable
-                columns={columns}
-                data={tags}
-                itemPerPage={7}
-                filterColumn="name"
-                filterPlaceholder="İsme göre ara..."
-            />
+            {
+                tags ?
+                    <DataTable
+                        columns={columns}
+                        data={tags}
+                        itemPerPage={7}
+                        filterColumn="name"
+                        filterPlaceholder="İsme göre ara..."
+                    />
+                    :
+                    <>Kayıt bulunamadı.</>
+            }
         </div>
     );
 };

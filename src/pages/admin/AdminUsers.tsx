@@ -102,13 +102,18 @@ const AdminUsers = () => {
 
     return (
         <div className="w-full min-h-screen flex flex-col justify-center items-center gap-3 px-5 lg:px-24 py-5">
-            <DataTable
-                columns={columns}
-                data={users}
-                itemPerPage={7}
-                filterColumn="nickname"
-                filterPlaceholder="Kullanıcı adına göre ara..."
-            />
+            {
+                users ?
+                    <DataTable
+                        columns={columns}
+                        data={users}
+                        itemPerPage={7}
+                        filterColumn="nickname"
+                        filterPlaceholder="Kullanıcı adına göre ara..."
+                    />
+                    :
+                    <>Kayıt bulunamadı.</>
+            }
         </div>
     );
 };
